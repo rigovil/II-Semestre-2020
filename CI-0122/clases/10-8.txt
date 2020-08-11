@@ -1,0 +1,14 @@
+programa (antes de correr)
+	header | text | data
+	
+
+procesos (fork)
+	T(code)
+		procedimientos, metodos, funciones
+	D(data)
+		variables globales
+	H(heap)
+		variables dinamicas, malloc
+	S(stack)
+		parametros, variables locales
+		
