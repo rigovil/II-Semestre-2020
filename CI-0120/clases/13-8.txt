@@ -1,0 +1,3 @@
+la velocidad (MHz, GHz, etc) no es completamente determinante en el desempeño del procesador, sino por su diseño interno y de su propósito principal. La implementación del pipeline permitió mejorar el desempeño en los 80. Luego en los 2010s se crean los procesadores multinúcleos.
+
+calcular aceleración: 'tiempo viejo'/'tiempo nuevo'

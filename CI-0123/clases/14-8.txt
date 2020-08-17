@@ -1,0 +1,31 @@
+Socket
+
+ punto final de comunicación
+ abstracción con una clase de c++
+ 
+ class Socket {
+ 	Socket();
+ 	~Socket();
+ 	Connect();
+ 	Write();
+ 	Read();
+ 	 
+    private:
+    	id;
+ }
+ 
+ para implementarlo se utilizan llamados al sistema
+ 
+ Llamados:
+ 	constructor: (recibe param. bool ipv6, bool stream)
+ 		-socket(int domain, int type, int protocol);
+ 			domain: AF_INET o AF_INET6
+ 			type: SOCK_STREAM (tcp, tcp6) o SOCK_DGRAM (udp, udp6)
+ 			protocol: en 0 para efectos del proyecto
+ 			retorna el id del socket
+ 			
+ 	destructor:
+ 		-close(int id):
+ 			id: del socket
+ 			
+ El cliente es que el inicia la comunicación

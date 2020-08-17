@@ -1,0 +1,5 @@
+tiempoVAX/tiempoHP = 51
+tiempoVAX/tiempoIBM = 3016
+
+(tiempoVAX/tiempoIBM) / (tiempoVAX/tiempoHP) = tiempoHP/tiempoIBM
+3016/51 = 59
