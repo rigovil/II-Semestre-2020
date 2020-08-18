@@ -1,0 +1,31 @@
+hay dos niveles en el que hay paralelismo:
+-> a nivel de datos (dlp): cuando un mismo programa o instrucción se replica pero cada réplica se utiliza con un conjunto distinto de datos.
+-> a nivel de tareas (tlp): correr en la misma máquina diferentes tareas.
+
+cómo el hardware explota esos dos niveles:
+-> paralelisimo a nivel de instrucciones: varias instrucciones en paralelo.
+
+-> arquitecturas vector-GPU: varios computadoras ejecutando el mismo programa, se utiliza un lenguaje de programación en específico, donde cada una trabaja con un conjunto de datos diferente.
+
+-> paralelismo a nivel de hilos: cada proceso crea hilos o pequeños programas, donde se comparte el mismo espacio de memoria pero también tienen sus datos locales.
+
+*) coherencia y controladores de cache: cada hilo, que es representado por un núcleo, tiene su propia la caché. Estas cachés cargan sus datos mediante bloques de la memoria principal. En cada caché el bloque posee un identificador (dirección en memoria principal y un campo que indica el estado de bloque), entonces si hay una caché que modifica una parte del bloque o el bloque completo, el controlador de esa caché envía un mensaje por el bus para que los otros controladores de las otras cachés marquen como inválido el bloque en esas otras cachés y se marca como modificado en la caché donde se modificó. Un bloque inválido genera el mismo resultado que un fallo en la caché (el bloque no existe). Si una caché solicita el bloque para lectura, se manda un mensaje por el bus y el controlador de caché donde se modificó el bloque indica que ha sido modificado, lo manda a cambiar a memoria principal (o a otro nivel de caché si existe) y se lo envía a la caché que lo solicita y el que lo recibe deja el bloque en estado compartido. El estado del bloque donde se modificó pasa de modificado a compartido. Si una tercera caché solicita el bloque para lectura, envía el msj por el bus y los otros controladores de caché indican que está compartido (válido) entonces se envía desde memoria principal. Si es para escritura, las otras cachés deben invalidar el bloque.
+
+-> paralelismo a nivel de requerimientos: clusters de ejemplo
+
+-------------------- ******************** --------------------
+
+Taxonomía de Flynn: una forma de clasificar las máquinas/computadoras
+
+-> SISD: instrucciones vienen de una única fuente y los datos también vienen de una única fuente.
+
+-> SIMD: instrucciones vienen de una única fuente (mismo programa ejecutándose) pero los datos vienen de múltiples fuentes. Ej: computadoras vector, todas ejecutando el mismo programa pero los datos vienen de muchas fuentes distintas.
+
+-> MISD: diferentes programas trabajando con el mismo conjunto de datos. No comerciales.
+
+-> MIMD: varios programas con diferentes conjuntos de datos.
+
+-------------------- ******************** --------------------
+
+
+
