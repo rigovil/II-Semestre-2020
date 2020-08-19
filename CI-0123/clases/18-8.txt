@@ -1,0 +1,13 @@
+Clase Socket
+
+Método Connect:
+recibe dirección ip y el puerto
+connect(id, struct sockaddr, socklen_t)
+	id: id del socket
+	struct sockaddr: 
+	
+sockaddr_in solo indica que es una variable de ingreso (de internet?), se hace el casting correspondiente a struct sockaddr, pues hay muchas familias de sockets pero en este caso usamos la de internet.
+
+bind: dado un puerto y una ip, lo asocia a un programa
+listen: etapa donde el servidor se queda esperando a que le llegue una conexión. Backlog: tamaño de la cola de conexiones pendientes.
+accept: saca la primera conexión de la cola y crea un socket nuevo para crear esa conexión.
