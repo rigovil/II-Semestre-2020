@@ -1,0 +1,27 @@
+Hz: ciclos de reloj por segundo
+longitud de ciclo de reloj: ciclos de reloj en un segundo o tiempo entre un tic y otro.
+velocidad de 1 GHz -> longitud de ciclo de reloj = 1 ns
+velocidad de 2 GHz -> 2 ns
+
+la velocidad del reloj del procesador es lo que tarda la etapa más larga de una instrucción en ejecutarse, si tarda 2ns entonces es 2GHz. Overclock: poner a correr más rápido el reloj.
+
+----------- ********** -----------
+
+Memoria
+
+Las principales memorias comenzaron siendo SRAM donde para 1 bit se necesitaban aprox 5 o 6 circuitos de transistores. Luego llegaron las DRAM donde a 1 bit le corresponde 1 circuito pero es más volátil por lo que tiene que estarse refrescando.
+Ahora las memorias son direccionables por byte o por palabra. Para acceder a una palabra se indica el número de fila y de columna, se gasta un tiempo activando el banco de memoria que se está usando y también se activa la fila que se quiere buscar y se almacena en un buffer, por lo que si se vuelve a utilizar esa fila, se gasta menos tiempo. Luego, en el buffer, se busca la palabra por columna.
+Las cachés son SRAM, no necesitan refrescarse.
+
+----------- ********** -----------
+
+Parte 2 de la presentación
+
+a) diseño del set de instrucciones, necesita definirse:
+	-> almacenamiento de operandos: de dónde saca la ALU los operandos (registros, memoria, pila, etc)
+	-> direccionamiento de memoria: por byte, alineado y el tamaño de la dirección.
+	-> tipo y tamaño de los operandos
+	-> operaciones (aritméticas, lógicas, transferencia, control)
+	-> codificación en lenguaje máquina
+	
+b) organizacion funcional (pipeline) y microarquitectura
