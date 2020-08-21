@@ -1,6 +1,5 @@
 public class Main {
 	public static void main(String argv[]) {
-		int a = 1;
-		System.out.println(a);
+		System.out.println("hola\nadios\nmentira hola\n");
 	}
 }
