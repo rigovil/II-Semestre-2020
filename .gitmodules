@@ -1,3 +1,6 @@
 [submodule "CI-0122_b78292"]
 	path = CI-0122_b78292
 	url = https://github.com/rigovil/CI-0122_b78292
+[submodule "Entregas/CI0122"]
+	path = Entregas/CI0122
+	url = https://github.com/rigovil/CI0122
