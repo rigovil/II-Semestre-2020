@@ -1,8 +1,13 @@
 #include "Buzon.h"
 
-Buzon :: Buzon() {
+Buzon :: Buzon(bool queue) {
 
-    id = msgget(KEY, 0666 | IPC_CREAT);
+    if(!queue) {
+        id = msgget(KEY, 0666 | IPC_CREAT);
+    }
+    else {
+        id = msgget(KEY, 0666);
+    }
 
     if(-1 == id) {
         perror("Buzon::Buzon");
@@ -12,14 +17,14 @@ Buzon :: Buzon() {
 }
 
 
-Buzon :: ~Buzon() {
+// Buzon :: ~Buzon() {
 
-    if(-1 == msgctl(id, IPC_RMID, NULL)) {
-        perror("Buzon::~Buzon");
-        exit(0);
-    }
+//     if(-1 == msgctl(id, IPC_RMID, NULL)) {
+//         perror("Buzon::~Buzon");
+//         exit(0);
+//     }
 
-}
+// }
 
 
 /**
@@ -27,7 +32,7 @@ Buzon :: ~Buzon() {
  * @param mensaje dirección del buffer donde se encuentra el mensaje.
  * @return 0 en caso de éxito.
  */
-int Buzon :: Enviar(char *mensaje) {
+int Buzon :: Enviar(const char * mensaje) {
 
     int resultado;
     struct msgbuf {
@@ -56,19 +61,20 @@ int Buzon :: Enviar(char *mensaje) {
  * @param mensaje dirección del buffer donde se encuentra el mensaje.
  * @param cantidad ???
  * @param tipo identificador del mensaje en mtype.
+ * @return 0 en caso de éxito.
  */
-int Buzon :: Enviar(char *mensaje, int cantidad, long tipo) {
+int Buzon :: Enviar(const char * mensaje, int cantidad, long tipo) {
 
     int resultado;
     struct msgbuf {
         long mtype;
-        // int cantidad;
+        int cantidad;
         char buf[MSG_SIZE];
     };
 
     struct msgbuf msg;
     msg.mtype = tipo;
-    // msg.cantidad = cantidad;
+    msg.cantidad = cantidad;
     strncpy(msg.buf, mensaje, MSG_SIZE);
 
     resultado = msgsnd(id, (void *) &msg, sizeof(msg), IPC_NOWAIT);
@@ -90,15 +96,15 @@ int Buzon :: Enviar(char *mensaje, int cantidad, long tipo) {
  * @param tipo identificador del mensaje.
  * @return cantidad de bytes recibidos en el mensaje.
  */
-int Buzon :: Recibir(void *mensaje, int len, long tipo) {
+int Buzon :: Recibir(void * mensaje, int len, long tipo) {
 
     int resultado;
-    resultado = msgrcv(id, &mensaje, len, tipo, IPC_NOWAIT);
+    resultado = msgrcv(id, mensaje, len, tipo, IPC_NOWAIT);
 
     if(-1 == resultado) {
         perror("Buzon::Recibir");
-        exit(0);
     }
 
     return resultado;
+    
 }

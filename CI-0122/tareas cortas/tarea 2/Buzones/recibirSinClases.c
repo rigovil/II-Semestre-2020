@@ -33,7 +33,7 @@ struct msgbuf {
    st = msgrcv( id,  &A, size, 2019, IPC_NOWAIT );
    while ( st > 0 ) {
       printf("Label: %s, times %d \n", A.label, A.times );
-      st = msgrcv( id,  &A, size, 2018, IPC_NOWAIT );
+      st = msgrcv( id,  &A, size, 2019, IPC_NOWAIT );
    }
 
    msgctl( id, IPC_RMID, NULL );

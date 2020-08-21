@@ -38,7 +38,7 @@ class Socket{
         
     private:
         int idSocket;
-        bool ipv6;
+        bool is_ipv6;
 };
 
 #endif

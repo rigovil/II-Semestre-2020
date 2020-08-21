@@ -23,6 +23,8 @@ Socket :: Socket( bool stream, bool ipv6 ) {
          idSocket = socket(AF_INET, SOCK_DGRAM, 0);
       }
    }
+
+   this->is_ipv6 = ipv6;
    
    if(-1 == idSocket) {
       perror("Socket::Socket");
@@ -58,16 +60,17 @@ void Socket :: Close(){
 /*
  * Conecta el socket a partir de una dirección y un puerto.
  * @param hostip string con la dirección del servidor.
- * @param puerto puerto al cual se va a hacer la conexión.
+ * @param port número de puerto al cual se va a hacer la conexión.
  */
 int Socket :: Connect( const char * hostip, int port ) {
 
    int conexion;
 
-   if(ipv6) {
+   if(this->is_ipv6) {
       struct sockaddr_in6 server_addres6;
       server_addres6.sin6_family = AF_INET6;
       server_addres6.sin6_port = htons(port);
+      server_addres6.sin6_flowinfo = 0;
       inet_pton(AF_INET6, hostip, &server_addres6.sin6_addr);
       conexion = connect(idSocket, (struct sockaddr *) &server_addres6, sizeof(server_addres6));
    }
@@ -85,6 +88,7 @@ int Socket :: Connect( const char * hostip, int port ) {
    }
 
    return conexion;
+
 }
 
 
