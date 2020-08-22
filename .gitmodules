@@ -4,3 +4,9 @@
 [submodule "Entregas/CI0122"]
 	path = Entregas/CI0122
 	url = https://github.com/rigovil/CI0122
+[submodule "ci0123"]
+	path = ci0123
+	url = https://git.ucr.ac.cr/RODRIGO.VILCHEZ/ci0123.git
+[submodule "Entregas/ci0123"]
+	path = Entregas/ci0123
+	url = https://git.ucr.ac.cr/RODRIGO.VILCHEZ/ci0123.git
