@@ -32,6 +32,7 @@ Buzon :: Buzon(bool queue) {
  * @param mensaje dirección del buffer donde se encuentra el mensaje.
  * @return 0 en caso de éxito.
  */
+
 int Buzon :: Enviar(const char * mensaje) {
 
     int resultado;
@@ -63,6 +64,7 @@ int Buzon :: Enviar(const char * mensaje) {
  * @param tipo identificador del mensaje en mtype.
  * @return 0 en caso de éxito.
  */
+
 int Buzon :: Enviar(const char * mensaje, int cantidad, long tipo) {
 
     int resultado;
@@ -73,8 +75,8 @@ int Buzon :: Enviar(const char * mensaje, int cantidad, long tipo) {
     };
 
     struct msgbuf msg;
-    msg.mtype = tipo;
-    msg.cantidad = cantidad;
+    msg.mtype       = tipo;
+    msg.cantidad    = cantidad;
     strncpy(msg.buf, mensaje, MSG_SIZE);
 
     resultado = msgsnd(id, (void *) &msg, sizeof(msg), IPC_NOWAIT);
@@ -96,6 +98,7 @@ int Buzon :: Enviar(const char * mensaje, int cantidad, long tipo) {
  * @param tipo identificador del mensaje.
  * @return cantidad de bytes recibidos en el mensaje.
  */
+
 int Buzon :: Recibir(void * mensaje, int len, long tipo) {
 
     int resultado;

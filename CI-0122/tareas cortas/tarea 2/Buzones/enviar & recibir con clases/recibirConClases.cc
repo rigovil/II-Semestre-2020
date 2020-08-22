@@ -23,7 +23,7 @@ int main( int argc, char ** argv ) {
    int id, size, st;
    Buzon m(true);
 
-   st = m.Recibir( (void *) &A, sizeof(A), 2020 );  // Receives a message with 2019 type
+   st = m.Recibir( (void *) &A, sizeof(A), 2020 );  // Receives a message with 2020 type
    
    while ( st > 0 ) {
       printf("Label: %s, times %d \n", A.label, A.times );

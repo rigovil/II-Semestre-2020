@@ -8,37 +8,62 @@
  *  Fecha: 2020/Ago/08
 */
 
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
+struct my_msgbuf {
+   long mtype;
+   double casiPi;
+};
 
-/*
-   Realiza la acumulacion de terminos desde una posicion inicial hasta un termino final
-*/
-double calcularSumaParcialPi( double Pi[], int proceso, long inicial, long terminos ) {
-   double casiPi = 0;
+
+double calcularSumaParcialPi( int proceso, long inicial, long terminos, int queue ) {
+
+   struct my_msgbuf msg;
+   double casiPi  = 0;
    double alterna = 4;
-   long divisor = 0;
+   long divisor   = 0;
    long termino;
+   int send;
 
    for ( termino = inicial; termino < terminos; termino++ ) {
-      divisor = termino + termino + 1;		// 2 x termino + 1
-      casiPi += alterna/divisor;		// 4 / (2xi + 1)
-      alterna *= -1;				// Pasa de 4 a -4 y viceversa, para realizar la aproximacion de los terminos
+      divisor  = termino + termino + 1;		
+      casiPi  += alterna/divisor;		
+      alterna *= -1;				
    }
-   Pi[ proceso ] = casiPi;			// Guarda el resultado en el vector y finaliza
+
+   msg.mtype   = 1;
+   msg.casiPi  = casiPi;
+   send        = msgsnd(queue, (const void *) &msg, sizeof(msg), IPC_NOWAIT);
+
+   if(-1 == send) {
+      perror("msgsnd");
+   }
+
    exit( 0 );
+
 }
 
 
 int main( int argc, char ** argv ) {
+
+   int proceso, pid, queue, receive;
    long terminos, inicio, fin;
-   int proceso;
-   int pid;
-   double casiPi[ 10 ] = { 0 };
+   double resultado = 0;
+   struct my_msgbuf msg;
+
+   queue = msgget(0xB78292, 0666 | IPC_CREAT);
+
+   if(-1 == queue) {
+      perror("msgget");
+      exit(0);
+   }
 
    terminos = 1000000;
    if ( argc > 1 ) {
@@ -50,7 +75,7 @@ int main( int argc, char ** argv ) {
       fin = (proceso + 1) * terminos/10;
       pid = fork();
       if ( ! pid ) {
-         calcularSumaParcialPi( casiPi, proceso, inicio, fin );
+         calcularSumaParcialPi( proceso, inicio, fin, queue );
       } else {
          printf("Creating process %d: starting value %ld, finish at %ld\n", pid, inicio, fin );
       }
@@ -62,10 +87,18 @@ int main( int argc, char ** argv ) {
    }
 
    for ( proceso = 1; proceso < 10; proceso++ ) {
-      casiPi[ 0 ] += casiPi[ proceso ];
+      receive = msgrcv(queue, &msg, sizeof(msg), 1, IPC_NOWAIT);
+      
+      if(-1 == receive) {
+         perror("msgrcv");
+         exit(0);
+      }
+
+      resultado += msg.casiPi;
    }
 
-   printf( "Valor calculado de Pi es \033[91m %g \033[0m con %ld terminos\n", casiPi[ 0 ], terminos );
+   msgctl(queue, IPC_RMID, NULL);
 
+   printf( "Valor calculado de Pi es \033[91m %f \033[0m con %ld terminos\n", resultado, terminos );
 
 }
