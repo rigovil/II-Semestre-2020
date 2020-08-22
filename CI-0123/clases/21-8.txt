@@ -1,0 +1,7 @@
+nc -l 8080 simula un servidor en la máquina
+utilizar la dirección local de la máquina en ipv6
+
+https://api.covid19api.com/total/country/costa-rica 
+https://api.covid19api.com/countries 
+
+
