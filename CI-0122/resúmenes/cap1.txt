@@ -1,0 +1,42 @@
+Un S.O es un software que maneja el hardware de la computadora, provee una base para las aplicaciones y es intermediario entre humano-hardware. Una responsabilidad fundamental es asignar recursos del hardware a los programas y de proveer los meadios para el buen uso de estos recursos, además de ejecutar programas y hacer fácil los problemas de un usuario.
+
+S.O desde la perspectiva del usuario:
+varía de acuerdo con la interfaz usada, se intenta maximizar el trabajo que el usuario realiza. Depende del uso para el cual la máquina fue creada.
+
+S.O desde la perspectiva de la máquina:
+es el programa más relacionado con el hardware: como un asignador eficiente y controlador de recursos. Es un programa de control que supervisa la ejecución de programas por el usuario para prevenir errores y mal uso de la computadora.
+
+El kernel es el programa que corre en todo momento, además de este hay otros dos tipos de programas: programas del sistema (asociados al S.O pero no neces. al kernel) y las aplicaciones. 
+Los S.O de dispositivos móviles incluyen además un middleware (conjunto de frameworks para los desarrolladores, que soportan bases de datos, multimedia, gráficos,etc).
+
+
+----------------------------------------- ************************************************************** -----------------------------------------
+
+							 ORGANIZACIÓN DE LA COMPUTADORA
+						
+Una pc de propósito general consiste en uno o más CPU y controladores de dispositiovs conectados a partir de un bus. Un controlador tiene un buffer local y registros de propósito específico y es responsable de mover datos entre los dispositivos periféricos que controla y ese buffer. Los S.O tienen device drivers para cada controlador. El CPU y los controladores pueden correr en paralelo por lo que un controlador de memoria sincroniza los accesos a memoria.
+
+-> Interrupciones (evento asíncrono): el hardware puede causar una interrupción en cualquier momento enviando una señal al CPU mediante el bus. Cuando el CPU es interrumpido, deja lo que está haciendo para transferir el control a una dirección fija donde usualmente se encuentra la dirección de la rutina para la interrupción. Una tabla (array) con punteros a las direcciones de las rutinas de interrupción puede ser también utilizado, se encuentra en las primeras posiciones de memoria y se indexa con números únicos (windows y unix trabajan así). Se debe guardar también el estado de lo que se interrumpió para restaurar y retomar la ejecución una vez resulta la interrupción.
+
+El mecanismo de interrupciones funciona de la siguiente manera: El CPU tiene un cable llamado interrupt-request line donde se fija después de ejecutar cada instrucción, si detecta una señal por ese cable, lee el número de interrupción y salta a la dirección donde está la rutina de interrupción y comienza a ejecuta desde ahí. Se guarda el estado previo de lo que se estaba ejecutando, ejecuta la interrupción y restaura el estado anterior, volviendo a la dirección donde estaba ejecutándose previamente. En S.O's modernos se necesitan cosas más sotisficadas: *) poder aplazar la interrupción durante ejecuciones críticas. *) interrupciones multinivel para distinguir entre interrupciones con prioridad alta o baja. Esto se logra con un hardware de controlador de interrupciones.
+
+Los CPU tienen dos lineas de solicitud de interrupciones: nonmaskable interrupt, reserverda para eventos como errores de memoria irrecuperable y el maskable que usan los controladores para solicitar algún servicio.
+
+
+-> Estructura de almacenamiento: el CPU carga las instrucciones solamente desde memoria (RAM), cualquier programa debe cargarse primero en memoria para ejecutarse. El primer programa en ejecutarse es el del boot (quien carga al S.O), como la RAM es volátil, el bootstrap program se carga en la ROM (EEPROM), puede cambiarse pero no muy a menudo, es de baja velocidad y contiene programas estáticos e información poco usada. La memoria es un array de bytes donde cada byte tiene una dirección, la interacción se logra con operaciones como load: mem -> registros, y store: registros -> mem. Como las memorias principales son pequeñas y volátiles (se pierde la info cuando se apaga la PC), estas ofrecen un almacenamiento secundario en HDD (discos duros) para los programas y datos que necesitan guardarse de forma permanente, suele ser más lenta que la mem principal. Existen otras formas de almacenamiento: registros, caché, etc. Entre más pequeños y cercanos al CPU, más rápidos son.
+
+-> Estructura de I/O: gran parte del S.O se dedica a manejar la entrada y salida. Para datos voluminosos, se utiliza el acceso directo a memoria el cual permite a los controladres transferir información directamente hacia o desde mem principal sin que intervenga el CPU.
+
+
+----------------------------------------- ************************************************************** -----------------------------------------
+
+							  ARQUITECTURA DE LA COMPUTADORA
+						
+-> Sistemas de un procesador: el núcleo que ejecuta un set de instruccinoes, estos sistemas tienen otros procesadores de propósito específico como los procesadores en discos, teclados, controladores gráficos, etc, que corren un set limitado de instrucciones y no corren procesos, son controlados por el S.O en algunas ocasiones, en otros son componentes de bajo nivel del hardware y el S.O no se puede comunciar con ellos y se comportan de manera autónoma. 
+
+-> Sistemas con multiprocesadores: comparten el bus y aveces la memoria, dispositivos periféricos y el reloj. Cuando múltiples procesadores cooperan para una tarea, existe un gasto para mantenerlos a todos funcionando correctamente lo que baja la ganancia esperada por uso de múltiples procesadores. Los más comunes son los SMP, donde cada procesador realiza todas las tareas, aumenta el rendimiento pero pueden haber procesadores haciendo poco trabajo y otros mucho pues las CPU están separadas. Existen los multicore que son mejores que los múltiples procesadores con un solo núcleo pues la comunicación es más rápida ya que los núcleos están en un solo chip, además gastan menos energía.
+	*) CPU: hardware que ejecuta instrucciones
+	*) Procesador: chip que contiene uno o más CPU's.
+	*) Núcleo: unidad básica de cómputo del CPU.
+	
+
