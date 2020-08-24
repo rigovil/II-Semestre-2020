@@ -1,4 +1,4 @@
-Un S.O es un software que maneja el hardware de la computadora, provee una base para las aplicaciones y es intermediario entre humano-hardware. Una responsabilidad fundamental es asignar recursos del hardware a los programas y de proveer los meadios para el buen uso de estos recursos, además de ejecutar programas y hacer fácil los problemas de un usuario.
+Un S.O es un software que maneja el hardware de la computadora, provee una base para las aplicaciones y es intermediario entre humano-hardware. Una responsabilidad fundamental es asignar recursos del hardware a los programas y de proveer los medios para el buen uso de estos recursos, además de ejecutar programas y hacer fácil los problemas de un usuario.
 
 S.O desde la perspectiva del usuario:
 varía de acuerdo con la interfaz usada, se intenta maximizar el trabajo que el usuario realiza. Depende del uso para el cual la máquina fue creada.
@@ -38,5 +38,69 @@ Los CPU tienen dos lineas de solicitud de interrupciones: nonmaskable interrupt,
 	*) CPU: hardware que ejecuta instrucciones
 	*) Procesador: chip que contiene uno o más CPU's.
 	*) Núcleo: unidad básica de cómputo del CPU.
+Tener muchos CPU's puede generar cuellos de botella por lo que a cada uno se le asigna una memoria local accesible desde un pequeño y rápido bus, todos comparten el espacio físico, esto se conoce como NUMA (acceso a memoria no uniforme). 
+Los blade servers son sistemas donde la placa del procesador, de los disp. I/O y de red estan en el mismo chasis, con la diferencia entre los multiprocesadores tradicionales que los blade servers se inicia (boot) de manera independiente y corre su propio S.O.
+
+-> Clusters: sistemas que reúnen múltiples CPU's, están compuestos por dos o más sistemas individuales que están unidos, comparten almacenamiento y se conectan por una red local. Se utilizan para proveer un servicio de alta disponibilidad: no afecta si uno falla. También proveen cálculos con alto desempeño pues permiten paralelismo.
 	
 
+----------------------------------------- ************************************************************** -----------------------------------------
+
+								OPERACIONES DEL S.O
+								
+Cuando se enciende o se reinicia una PC, empieza a correr el bootstrap quien inicializa todo el sistema, desde los registros hasta los controladores. Este debe cargar el kernel a la memoria y empezar a ejecutarse. Los system daemons son servicios fuera del kernel provistos por programas que cargan a memoria en el tiempo de arranque.
+
+-> Multiprogramming & Multitasking: los S.O deben ser capaces de correr varios programas a la vez. En estos sistemas un programa en ejecución se llama proceso. En el multitasking, el CPU ejecuta varios procesos al intercambiar los procesos frecuentemente, el intercambio ocurre mientras un proceso espera por alguna acción, ej: I/O. Para asegurar tiempos de respuesta considerables, se utiliza la memoria virtual.
+
+-> Dual-mode and Multimode operation: se debe procurar que un programa cause a otros funcionar de manera incorrecta, por lo que se distingue entre una ejecución de código por parte del S.O y por parte del usuario, estos dos modos son: kernel mode y user mode. Cuando una aplicación del usuario requiere un servicio del S.O (por un syscall) hay una transición del user mode al kernel mode y este devuelve el resultado de la solicitud. Esto se logra con el mode bit, que indica el modo en el que se está corriendo: kernal 0, user 1. En el boot time se empieza en kernel mode. Cuando ocurra una trampa, interrupción o un syscall, el hardware cambia a kernel mode y antes de pasar control al usuario lo pasa a user mode.
+
+-> Timer: para asegurar que el S.O mantenga control del CPU se utiliza un timer donde cada cierto tiempo se genera una interrupción.
+
+
+----------------------------------------- ************************************************************** -----------------------------------------
+
+
+								MANEJO DE LOS RECURSOS
+								
+El S.O es un administrador de recursos.
+
+-> Adminsitrador de procesos: los procesos necesitan ciertos recursos para cumplir su tarea, estos se asignan al proceso mientras se ejecuta. Un proceso tiene un contador de programa con la siguiente instrucción a ejecutar.
+	*) crear y eliminar procesos del usuario y del sistema.
+	*) suspender y reanudar procesos
+	*) proveer mecanismos de sincronización y de comunicación para los procesos.
+	
+-> Administrador de memoria: mem. principal es usualmente el único almacenamiento al que el CPU tiene acceso directo, en caso de usar el disco, esos datos se pasan a mem. por medio de llamados I/O. Para ejecutar un programa, este debe cargarse a memoria, cuando termina, ese espacio se libera. Para mejorar el rendimiento, algunas PC's mantienen programas siempre en memoria. El S.O se encarga de:
+	*) hacer seguimiento de cuáles partes de la memoria se están usando y por cuáles procesos.
+	*) asignar y desasignar espacios de memoria
+	*) decidir cuáles procesos y datos se mueven adentro o fuera de la memoria.
+	
+-> File-system Management: una de las partes más visibles de un S.O. Se encarga de: 
+	*) crear y eliminar archivos o directorios
+	*) mapear archivos en el disp. de almacenamiento
+
+-> Administrador de almacenamiento masivo: se encarga de:
+	*) montar y desmontar
+	*) manejar el esapcio libre
+	*) particiones
+	
+-> Administrador de caché
+
+-> Administrador del sistema I/O: el S.O se encarga de ocultar al usuario las peculiaridades de un hardware en específico. Existe un I/O subsystem que se encarga de (en linux):
+	*) manejo de memoria que usa buffers, caches, etc
+	*) interfaz de devices drivers
+	*) drivers para dispositivos de hardware en específico.
+En este caso el device driver es el único que conoce esas peculiaridades del dispositivo.
+
+
+----------------------------------------- ************************************************************** -----------------------------------------
+
+								   SEGURIDAD
+								   
+en caso de que existan múltiples usuarios, que se trabaje solamente sobre los recursos que está usando un usuario en específico.
+
+
+----------------------------------------- ************************************************************** -----------------------------------------
+
+								VIRTUALIZACIÓN 
+								
+Permite abstraer el hardware de una computadora en dsitintos ambientes de ejecución. Permite a los S.O corren como aplicaciones en otros S.O
