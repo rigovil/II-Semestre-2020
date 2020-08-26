@@ -7,6 +7,13 @@
  *  los metodos necesarios para los clientes, en la otra etapa los otros
  *  metodos para los servidores
  */
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 
 #ifndef Socket_h
 #define Socket_h
@@ -31,7 +38,7 @@ class Socket{
         
     private:
         int idSocket;
-        bool ipv6;
+        bool is_ipv6;
 };
 
 #endif

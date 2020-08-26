@@ -7,7 +7,8 @@
 #include <map>
 #include <regex>
 
-#define REG_EXPRESSION "(<[^!][^ >]*)"
+// #define REG_EXPRESSION "\[\"(.*?)\"+(.*?)+\]"
+#define REG_EXPRESSION "\[([^\[\]]*)\]"
 
 class ParserHTML {
 

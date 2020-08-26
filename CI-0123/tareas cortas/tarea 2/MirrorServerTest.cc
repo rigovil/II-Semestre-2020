@@ -9,7 +9,7 @@
 int main( int argc, char ** argv ) {
    int childpid;
    char a[512];
-   Socket s1, *s2;
+   Socket s1(true), *s2;
 
    s1.Bind( 9876 );		// Port to access this mirror server
    s1.Listen( 5 );		// Set backlog queue to 5 conections
@@ -22,7 +22,8 @@ int main( int argc, char ** argv ) {
       else if (0 == childpid) {  // child code
               s1.Close();	// Close original socket in child
               s2->Read( a, 512 ); // Read a string from client
-              s2->Write( a );	// Write it back to client, this is the mirror function
+              s2->Write( a, sizeof(a) );	// Write it back to client, this is the mirror function
+              printf( "%s", a );
               exit( 0 );	// Exit
       }
       s2->Close();		// Close socket in parent
