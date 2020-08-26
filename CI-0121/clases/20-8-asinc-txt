@@ -1,0 +1,62 @@
+------------
+| Video #2 |
+------------
+
+-> Hardware de red: clasificar de las redes dependiendo de aspectos como el domino, fin, etc.
+*) por tipo de difusión:
+	1. Unidifusión: un dispositivo se comuncia con otro
+	2. Multidifusión: un dispositivo que se comunica con otro grupo de dispositivos.
+	3. Broadcasting: un dispositivo se comunica y entrega un msj a todos los dispositivos en una red.
+	
+	
+*) redes punto a punto: para conectar dos nodos entre sí
+
+si se clasificaran las redes por extensión territorial:
+	1. PAN (redes área personal): comunicaciones dentro del rango de una persona, conectar dispositivos del mismo dueño, se pueden usar redes inalámbricas o conexiones por bluetooth. Redes que se originan a partir de una misma persona.
+	
+	2. LAN (redes de área local): más grandes pero en el contexto de una organización a nivel empresesarial o de hogar, requieren de un enrutador (cableado o inalámbrico) para transmitir datos de la red hacia internet o viceversa. Requiere un punto de acceso si se implementa por wifi (WLAN) que generalmente tienen menor alcance que las LAN. En las redes de área local virtuales (VLAN) se hace una separación lógica 
+	
+	3. MAN (redes de área metropolitana): cubren una ciudad aprox, ej: redes de TV por cable. Las redes inalámbricas de alta velocidad son conocidas como WiMAX y buscan ofrecer servicios en una ciudad.
+	
+	4. WAN (redes de área amplia): abarcan áreas más grandes que MAN, utilizan muchos más equipos y niveles de comunicación. EJ: todo un país. Son gestionadas por compañías de telecomunicaciones (ISP).
+	
+	5. Interredes: redes de alcance global, ej: internet o satelitales.
+	
+	
+-> Software de red: 
+
+Jerarquía de protocolos: separación por capas y protocolos para que todo funcione, para reducir la complejidad y el diseño de las redes. Cada capa ofrece ciertos servicios a la capa superior y se realiza un ocultamiento de información a las capas inferiores. Los mensajes no se mezclan entre capas. Para comunicar un host 1 a un host 2 se necesitan pasar por todas las capas. La jerarquía de protocolos definen las pautas para lograr una comunicación entre redes y permitir interoperabilidad, que es: poder operar incluso con distintas tecnologías, fabricantes, dispositivos, etc. La separación por capas es el aspecto clave en el diseño de redes, cada capa se especializa en algo específico y en servir datos o servicios a otras capas. Esta separación confiere confiabilidad y especialización, además de posibilitar una mejor detección y corrección de errores.
+
+Clasificación según conexión: 
+	1. servicios orientados a la conexión: garantizar que todos los msjs lleguen al destino y en el orden correcto. (telemedicina y transacciones bancarias)
+	2. servicios sin conexión: no es tan importante si se produce una pérdida de información en el proceso o si los msjs llegan en orden desordenado (videojuegos, streaming).
+	
+Servicio: conjunto de operaciones que una capa proporciona a la capa superior, dice el qué hace pero no el cómo. 
+Protocolo: conjunto de reglas que rigen el formato y significado de los paquetes que se intercambian. 
+
+
+------------
+| Video #3 |
+------------
+
+Modelos de referencia:
+
+-> Modelo OSI: desarollada por la ISO para estandarizar los protocolos en las diversas capas. Este modelo tiene 7 capas, no es una arquitectura de red porque no se especifica los protocolos y servicios exactos que se utilizan en cada capa. 
+	1. Capa física: transmisión de bits puros a través de un canal de transmisión. Medios de transmisión: fibra óptica, cable telefónico, redes inalámbricas, cable coaxial. La idea es que si en un lado del cable se envía un bit 1 o 0, se reciba correctamente del otro lado.
+	
+	2. Capa de enlace de datos: transforma un medio de transmisión puro en una línea libre de errores de transmisión. Aquí se agrupan los datos y se manejan los errores en esos conjuntos de datos. El emisor divide los datos de entrada en tramos de datos. Se controla que un transmisor rápido inunde de datos a un receptor lento.
+	
+	3. Capa de red: controla la operación de la subred. Determina cómo se encamina los paquetes desde un origen hasta el destino, para ellos se pueden tener rutas estáticas o dinámicas. Se responsabiliza también por manejar el congestionamiento, si una ruta está congestionada entonces se redirige por otra ruta. El direccionamiento tiene relevancia.
+	
+	4. Capa de transporte: acepta datos de la capa de aplicación, dividirlos en unidades maś pequeñas y pasarlos a la capa de red para enviarlos a través de la red, se asegura que todas las piezas lleguen al otro extremo. Determina el servicio que debe proveer a la capa de sesión. En servicios orientados a la conexión, esta capa se asegura que los datos lleguen al destino en orden correcto y completos.
+	
+	5. Capa de sesión: permite a los usuarios en distintas máquinas establecer sesiones entre ellos, estas sesiones ofrecen varios servicios: control de diálogo (quién transmite), manejo de tokens (que no se intente la misma operación crítica por dos partes al mismo tiempo) y sincronización (Reanudar en el punto correcto si hay interrupción).
+	
+	6. Capa de presentación: se enfoca en la sintaxis y en la semántica de la información transmitida. Para posibilitar comunicación con PC con distinta representación interna de datos, se pueden definir estructuras abstractas que se intercambian con una codificación estándar, por ejemplo que se use en el cable, esto permite que se puedan comunicar máquinas de distinto tipo.
+	
+	7. Capa de aplicación: contiene una variedad de protocolos que los usuarios usan con frecuencia, son protocolos de alto nivel: SSH, FTP, HTTP, DHCP, DNS.
+	
+	
+-> Modelo TCP/IP: es un modelo pragmático, no teórico. Cuenta con 4 capas, fusiona la capa física y de enlace de datos, y la de sesión con presentación y aplicación. 
+
+Estandarización de redes: para lograr que funcionen las redes. ITU, ISO, IEEE.
