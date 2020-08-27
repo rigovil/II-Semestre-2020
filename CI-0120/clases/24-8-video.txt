@@ -1,0 +1,16 @@
+ISA (set de instrucciones): determina cómo se va a comportar el procesador, para qué va ser más útil y para qué no. Cosas que hay que definir para el ISA:	
+
+-> Almacenamiento de operandos (de dónde saca el ALU los operandos): 
+	1. Pila: en java se usa los dos primeros operandos de la pila. El primero es el TOS (top of stack), el segundo es el NEXT. Usualmente el procesador tiene una copia de esos dos elementos. Esos valores se actualizan dependiendo de la máquina. El resultado pasa a ser el tope de la pila. Hay que ver cómo copiar los operandos en la pila.
+	
+	2. Acumulador (un único registro): el ALU saca un operando de ese registro y el segundo operando se saca de memoria, el resultado se guarda en el acumulador.
+	
+	3. Registro-memoria (RM): el procesador tiene varios registros y hay uno en específico que es el primer operando, el segundo se saca de memoria. El resultado se guarda en algún otro registro. RISC no puede ser así.
+	
+	4. Registro-registro (RISC): los operandos vienen de los registros. El resultado se guarda en otro registro.
+	
+
+-> Direccionamiento de memoria (no qué tipos): es qué se cumple para las direcciones de memoria, de qué tamaño se quiere que la máquina maneje las direcciones, los registros deben ser lo suficientemente grandes para almacenar una dirección. Definir el número de byte a partir del cual se almacena un valor. Es decir que si se guarda un flotante de doble precisión (ejemplo, de 8 bytes) y se indica la dirección 400, a partir de esa dirección es que se guarda. Esa definición puede ser un byte o palabra. También hay que definir si la dirección debe o no ser alineada: significa que cada dirección dada debe ser múltiplo del tamaño del tipo de dato que se está pidiendo. (Ej: si es int, la dirección dada debe ser múltiplo de 4 en caso de ser por bytes y no por palabra). Razones para esto: porque la memoria está mapeada. Si no estuviera alineada, puede pasar que haya que activar dos filas para enviar un dato, pues las palabras del dato están al final de una fila y al inciio de la siguiente y puede ser lento.
+
+
+-> Modos de direccionamiento: cómo se accede a una dirección, se puede hacer load x6, 400 -> guarde en x6 lo que está en la pos. 400 de memoria, o load x6, 20(x9) -> guarde en x6 lo que está en la posición 20+x9, etc. Todo esto suele hacerse en CISC. En RISC-V el único modo de direccionamiento es n(Rx) = n+Rx, esto favorece el pipeline.
