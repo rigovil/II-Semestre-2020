@@ -3,12 +3,15 @@
 
 
 int main( int argc, char ** argv ) {
-   Socket s(true);     // Crea un socket de IPv4, tipo "stream"
+
+   Socket s(true);
    char buffer[ 512 ];
 
-   s.Connect( "127.0.0.1", 9876 ); // Same port as server
-   s.Write( argv[1], sizeof(argv[1]) );		// Send first program argument to server
-   s.Read( buffer, 512 );	// Read the answer sent back from server
-   printf( "%s", buffer );	// Print the string
+   s.Connect( "127.0.0.1", 9876 ); 
+   s.Write( argv[1], 512 );	
+   printf("Mensaje al servidor enviado.\n");
+   s.Read( buffer, 512 );	
+   printf("Mensaje del servidor recibido:\t");
+   printf( "%s\n", buffer );	
 
 }

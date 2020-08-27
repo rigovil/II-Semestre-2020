@@ -25,16 +25,15 @@ class Socket{
         Socket( int );
         ~Socket();
         int Connect( const char *, int );
-        int Connect( const char *, const char * );
-        void Close();
         int Read( char *, int );
         int Write( char *, int );
         int Write( char * );
         int Listen( int );
         int Bind( int );
-        Socket * Accept();
         int Shutdown( int );
         void SetIDSocket( int );
+        void Close();
+        Socket * Accept();
         
     private:
         int idSocket;

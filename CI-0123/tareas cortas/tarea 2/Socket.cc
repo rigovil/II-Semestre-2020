@@ -112,9 +112,9 @@ int Socket :: Connect( const char * hostip, int port ) {
 
 /**
  * Lee información enviada por un servidor a partir de un socket.
- * @param text dirección de memoria donde se almacena el mensaje enviado por el servidor.
- * @param len cantidad máxima de bytes que se leen de la información enviada por el servidor.
- * @return la cantidad de bytes recibidos por el servidor.
+ * @param text dirección de memoria donde se almacena el mensaje enviado por el servidor o el cliente.
+ * @param len cantidad máxima de bytes que se leen de la información enviada por el servidor o el cliente.
+ * @return la cantidad de bytes recibidos por el servidor o el cliente.
  */
 
 int Socket :: Read( char * text, int len ) {
@@ -132,7 +132,7 @@ int Socket :: Read( char * text, int len ) {
 
 
 /**
- * Envía información a un servidor mediante un socket.
+ * Envía información a un servidor o un ciente mediante un socket especificando el tamaño máximo del mensaje.
  * @param text dirección de memoria donde se encuentra el mensaje a enviar.
  * @param len cantidad máxima de bytes que se van a enviar.
  * @return la cantidad de bytes enviados.
@@ -149,6 +149,26 @@ int Socket :: Write( char * text, int len ) {
 
    return w;
    
+}
+
+
+/**
+ * Envía información a un servidor o un cliente mediante un socket sin especificar el tamaño máximo del mensaje.
+ * @param text dirección de memoria donde se encuentra el mensaje a enviar.
+ * @return la cantidad de bytes enviados.
+ */
+
+int Socket :: Write( char * text ) {
+
+   int w = write(idSocket, text, sizeof(*text));
+
+   if(-1 == w) {
+      perror("Socket::Write");
+      exit(0);
+   }
+
+   return w;
+
 }
 
 

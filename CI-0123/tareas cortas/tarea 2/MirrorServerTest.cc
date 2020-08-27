@@ -3,30 +3,35 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 #include "Socket.h"
 
 int main( int argc, char ** argv ) {
+
    int childpid;
    char a[512];
    Socket s1(true), *s2;
 
-   s1.Bind( 9876 );		// Port to access this mirror server
-   s1.Listen( 5 );		// Set backlog queue to 5 conections
+   s1.Bind( 9876 );		
+   s1.Listen( 5 );		
 
    for( ; ; ) {
-      s2 = s1.Accept();	 	// Wait for a conection
-      childpid = fork();	// Create a child to serve the request
-      if ( childpid < 0 )
+      s2 = s1.Accept();	
+      childpid = fork();	
+
+      if ( childpid < 0 ) {
          perror("server: fork error");
-      else if (0 == childpid) {  // child code
-              s1.Close();	// Close original socket in child
-              s2->Read( a, 512 ); // Read a string from client
-              s2->Write( a, sizeof(a) );	// Write it back to client, this is the mirror function
-              printf( "%s", a );
-              exit( 0 );	// Exit
       }
-      s2->Close();		// Close socket in parent
+      else if (0 == childpid) {  
+         s1.Close();	
+         s2->Read( a, 512 ); 
+         printf("Mensaje del cliente recibido:\t");
+         printf( "%s\n", a );
+         s2->Write( a, 512 );	
+         printf("Mensaje al cliente enviado.\n");
+         exit( 0 );	
+      }
+
+      s2->Close();
    }
 
 }
