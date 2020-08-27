@@ -13,4 +13,14 @@ ISA (set de instrucciones): determina cómo se va a comportar el procesador, par
 -> Direccionamiento de memoria (no qué tipos): es qué se cumple para las direcciones de memoria, de qué tamaño se quiere que la máquina maneje las direcciones, los registros deben ser lo suficientemente grandes para almacenar una dirección. Definir el número de byte a partir del cual se almacena un valor. Es decir que si se guarda un flotante de doble precisión (ejemplo, de 8 bytes) y se indica la dirección 400, a partir de esa dirección es que se guarda. Esa definición puede ser un byte o palabra. También hay que definir si la dirección debe o no ser alineada: significa que cada dirección dada debe ser múltiplo del tamaño del tipo de dato que se está pidiendo. (Ej: si es int, la dirección dada debe ser múltiplo de 4 en caso de ser por bytes y no por palabra). Razones para esto: porque la memoria está mapeada. Si no estuviera alineada, puede pasar que haya que activar dos filas para enviar un dato, pues las palabras del dato están al final de una fila y al inciio de la siguiente y puede ser lento.
 
 
--> Modos de direccionamiento: cómo se accede a una dirección, se puede hacer load x6, 400 -> guarde en x6 lo que está en la pos. 400 de memoria, o load x6, 20(x9) -> guarde en x6 lo que está en la posición 20+x9, etc. Todo esto suele hacerse en CISC. En RISC-V el único modo de direccionamiento es n(Rx) = n+Rx, esto favorece el pipeline.
+-> Modos de direccionamiento: cómo se accede a una dirección, se puede hacer load x6, 400 -> guarde en x6 lo que está en la pos. 400 de memoria, o load x6, 20(x9) -> guarde en x6 lo que está en la posición 20+x9, etc. Todo esto suele hacerse en CISC. En RISC-V el único modo de direccionamiento es n(Rx) = n+Rx, esto favorece el pipeline. 
+Codificación en RISC-V: ej: lw x1, 60(x2) -> guarde en x1 el entero que está en x2+60, entonces en lenguaje máquina (y en risc-v) los primeros 6 bits es el código de la instrucción.
+
+
+-> Tipo y tamaño de operandos: el tamaño define también el tamaño de los registros. En general: caracter ASCII 8 bits, UNICODE 16 bits, entero o palabra 32 bits, doble palabra o long 64 bits. Punto flotante 32 bits precisión simple y 64 bits precisión doble.
+
+
+-> Operaciones permitidas: aritmético y lógicas, transferencia de datos, de control (jumps y branches), con string, flotantes, gráficas (píxeles y vértices).
+
+
+-> Codificación: de qué manera se comunica al procesador que se quiere hacer una instrucción. Lenguaje máquina: instrucciones codificadas. En RISC-V el formato de codificación es fijo (32 bits).
