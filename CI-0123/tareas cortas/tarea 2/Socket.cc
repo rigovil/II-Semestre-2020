@@ -119,7 +119,7 @@ int Socket :: Connect( const char * hostip, int port ) {
 
 int Socket :: Read( char * text, int len ) {
 
-   int r = read(idSocket, text, len);
+   int r = read(idSocket, (void *) text, len);
 
    if(-1 == r) {
       perror("Socket::Read");
@@ -140,7 +140,7 @@ int Socket :: Read( char * text, int len ) {
 
 int Socket :: Write( char * text, int len ) {
 
-   int w = write(idSocket, text, len);
+   int w = write(idSocket, (const void *) text, len);
 
    if(-1 == w) {
       perror("Socket::Write");
@@ -160,7 +160,7 @@ int Socket :: Write( char * text, int len ) {
 
 int Socket :: Write( char * text ) {
 
-   int w = write(idSocket, text, sizeof(*text));
+   int w = write(idSocket, (const void *) text, strlen((const char *) text));
 
    if(-1 == w) {
       perror("Socket::Write");

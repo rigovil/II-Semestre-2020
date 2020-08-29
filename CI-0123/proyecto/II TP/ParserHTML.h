@@ -8,7 +8,9 @@
 #include <regex>
 
 // #define REG_EXPRESSION "\[\"(.*?)\"+(.*?)+\]"
-#define REG_EXPRESSION "\[([^\[\]]*)\]"
+// #define REG_EXPRESSION "\[([^\[\]]*)\]"
+#define REG_EXPRESSION "\\[\"([a-zA-Z0-9_ñ ])+\",[0-9]+,[0-9]+,[0-9]+,[0-9]+\\]"
+// #define REG_EXPRESSION "\"\""
 
 class ParserHTML {
 

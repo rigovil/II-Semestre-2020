@@ -11,7 +11,7 @@ int main( int argc, char ** argv ) {
    char a[512];
    Socket s1(true), *s2;
 
-   s1.Bind( 9876 );		
+   s1.Bind( 9866 );		
    s1.Listen( 5 );		
 
    for( ; ; ) {
@@ -26,7 +26,7 @@ int main( int argc, char ** argv ) {
          s2->Read( a, 512 ); 
          printf("Mensaje del cliente recibido:\t");
          printf( "%s\n", a );
-         s2->Write( a, 512 );	
+         s2->Write( a );	
          printf("Mensaje al cliente enviado.\n");
          exit( 0 );	
       }
