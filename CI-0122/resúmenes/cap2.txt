@@ -1,0 +1,14 @@
+SERVICIOS DE UN SISTEMA OPERATIVO:
+
+ 1. Interfaz de usuario: está la GUI y la CLI (command-line interface).
+ 2. Ejecución de programas: cargarlos a mem. y correrlos, terminar su ejecución.
+ 3. Operaciones de I/O: el usuario no suele manejarlas directamente.
+ 4. Manipulación de archivos.
+ 5. Comunicación entre procesos: mediante memoria compartida o paso de mensajes.
+ 6. Detección de errores: tanto en CPU, hardware, dispositivos de I/O o en programas del usuario.
+ 
+Algunas otras son para uso eficiente del sistema operativo:
+
+ 7. Asignador de recursos: para asignar recursos a los procesos que corren al mismo tiempo.
+ 8. Bitácoras (logging): mantener un registro de los recursos utilizados.
+ 9. Seguridad: acceso controlado a los recursos del sistema. Autenticación de usuarios, etc.
