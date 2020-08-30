@@ -1,4 +1,4 @@
-SERVICIOS DE UN SISTEMA OPERATIVO:
+2.1 SERVICIOS DE UN SISTEMA OPERATIVO
 
  1. Interfaz de usuario: está la GUI y la CLI (command-line interface).
  2. Ejecución de programas: cargarlos a mem. y correrlos, terminar su ejecución.
@@ -12,3 +12,61 @@ Algunas otras son para uso eficiente del sistema operativo:
  7. Asignador de recursos: para asignar recursos a los procesos que corren al mismo tiempo.
  8. Bitácoras (logging): mantener un registro de los recursos utilizados.
  9. Seguridad: acceso controlado a los recursos del sistema. Autenticación de usuarios, etc.
+ 
+ 
+2.2 INTERFAZ DE USUARIO-SISTEMA OPERATIVO
+
+ 1. Intérprete de comandos: su función principal es de obtener y ejecutar los comandos que indique del usuario. Para implementar estos comandos existen dos formas: una es que el intérprete tenga el código para ejecutar los comandos y el otro es que el código de los comandos esté en archivos y que el comando sea para identificar cuál archivo ejecutar, por lo que es más fácil si alguien quisiera crear su propio comando creando su archivo que indique la lógica y el código de lo que se quiera hacer.
+ 
+ 2. GUI: en lugar de indicar comandos, se usa mouse-teclado-etc para indicar lo que se quiere hacer
+ 
+ 3. Interfaz táctil.
+ 
+ 
+2.3 SYSTEM CALLS
+ 
+ 1. Interfaz de programación de aplicaciones: usualmente se diseñan programas de acuerdo con un API, que especifica una serie de instrucciones disponibles para el programador, algunos son: Windows API, POSIX API y Java API. Las funciones que componen estas API's hacen llamado y uso de los syscalls. Programar con base en un API y no directamente con syscalls permiten la portabilidad de un programa. Otro aspecto importante al manejar syscalls es el RTE (run-time environment) que provee una interfaz de syscalls que sirve como enlace a los syscalls disponibles en el S.O. Usualmente cada syscall se asocia a un id y el S.O maneja una tabla con esos id. 
+ Se utilizan tres métodos para pasar parámetros a los syscalls:
+ 
+  	I. Pasar parámetros a registros.
+  	II. Los parámetros se almacenan en bloques o tablas en memoria y la dirección de estos se envía como parámetro a los registros (si hay más parm que registros).
+  	III. También se puede usar una pila donde el S.O hace push y pop según necesite.
+  	
+ 2. Tipos de syscalls:
+ 
+ 	I. Control de procesos: un programa debe ser capaz de detener su ejecución de manera normal o abrupta. Si es de manera abrupta, se escribe un registro en un log file. También un proceso puede que quiera cargar o ejecutar otro programa. O un proceso padre esperar a otros procesos creados. Al compartir información entre procesos utilizar un lock para dar acceso controlado a esa información. Ejs: create process, terminate process, load, signal event, get process attributes.
+ 	
+ 	II. Manejo de archivos: para crear y eliminar archivos, abrirlos o cerrarlos, además de escribir y leer.
+ 	
+ 	III. Manejo de dispositivos: para cuando un proceso necesite de recursos como la mem. principal, drivers, etc. Si estos recursos están disponibles, se les dan al proceso, si no tiene que esperar.
+ 	
+ 	IV. Mantenimiento de información: para transferir información entre un programa de usuario y el S.O. Útiles para el debugger. 
+ 	
+ 	V. Comunicación: útiles para comunicación entre procesos, existen las formas de paso de mensajes (buzones) y memoria compartida.
+ 	
+ 	VI. Protección: mecanismo para controlar acceso a los recursos provistos por el sistema. Son para manipular permisos de los recursos y para verificar si un usuario tiene acceso o no a ciertos recursos.
+ 	
+ 	
+2.4 SERVICIOS DEL SISTEMA
+
+ Proveen un ambiente para el desarrollo y ejecución de programas.
+ 
+ 1. Manejo de archivos.
+ 2. Información: solicita datos como fecha, espacio disponible, etc.
+ 3. Edición de archivos.
+ 4. Soport para programación con lenguajes.
+ 5. Cargar y ejecutar programas.
+ 6. Comunicación: entre procesos, usuarios, etc.
+
+
+2.5 LINKERS & LOADERS
+
+ Un programa está en el disco como un binario (.out / .exe), y para correrlo, debe ser traído a memoria y colocarlo en el contexto de un proceso. 
+ El código fuente es compilado como object files, el linker combina estos object files en un único archivo binario, en esta fase también se incluyen librerías, etc. 
+ El loader se usa para cargar el archivo binario en memoria donde es elegible para correr en un núcleo del CPU. 
+ La reubicación (relocation) asigna direcciones finales al programa para que funcione adecuadamente. 
+ Muchos S.O permiten a un programa linkear librerías de manera dinámica mientras se carga el programa (loader), esto evita linkear librarías que al final no se van a usar, pues se cargan en el momento en que el código lo necesite en tiempo de ejecución. 
+ Los object files y ejecutables tienen formatos que incluyen el código máquina y una tabla de símbolos con la información de las funciones y variables del programa. En UNIX el estándar es ELF.
+ 	
+ 	
+ 	
