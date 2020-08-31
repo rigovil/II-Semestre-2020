@@ -105,4 +105,24 @@ Algunas otras son para uso eficiente del sistema operativo:
  	
  	IV. Módulos: el kernel tiene un set de copmonentes y puede linkear otros servicios con módulos en tiempo de ejecución o de arranque.
  	
- 	V. Sistemas híbridos: sistemas que combinan diferentes estructuras para conseguir rendimiento y seguridad.
+ 	V. Sistemas híbridos: sistemas que combinan diferentes estructuras para conseguir rendimiento, seguridad, etc.
+ 	
+ 	 - macOS & iOS: tiene una capa de experiencia de usuario que define la interfaz de software con el que los usuarios interactúan. Tiene una capa con frameworks de aplicaciones y otra de frameworks del núcleo (para gráficos y multimedia). Por último tiene un ambiente de kernel.
+ 	 - Android.
+ 	 
+ 	 
+2.9 CONSTRUIR Y ARRANCAR UN S.O
+
+ 	1. Construir un S.O desde cero: 
+ 	 - Escribir el código fuente del S.O.
+ 	 - Configurar el S.O para el sistema en que va a correr.
+ 	 - Compilar el S.O.
+ 	 - Instalar el S.O.
+ 	 - Arrancar la PC con el nuevo S.O.
+ 	 
+ 	2. System Boot (cargar el kernel): El proceso es el siguiente:
+ 	 - Un pequeño código (boot loader/bootstrap) localiza el kernel.
+ 	 - El kernel se carga a memoria y se ejecuta.
+ 	 - El kernel inicializa el hardware.
+ 	 - Se monta el root file system.
+ 	 
