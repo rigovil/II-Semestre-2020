@@ -69,4 +69,40 @@ Algunas otras son para uso eficiente del sistema operativo:
  Los object files y ejecutables tienen formatos que incluyen el código máquina y una tabla de símbolos con la información de las funciones y variables del programa. En UNIX el estándar es ELF.
  	
  	
+2.6 POR QUÉ LAS APLICACIONES SON ESPECÍFICAS PARA UN S.O
+
+ Cada S.O posee un único set de syscalls. Sin embargo, una aplicación puede ser ejecutada en distintos S.O en tres maneras distintas:
+ 
+ 	1. La aplicación puede haber estado escrita en un lenguaje interpretado (como Python o Ruby) y el intérprete está disponible en múltiples S.O's.
+ 	2. La aplicación puede ser escrita en un lenguaje que incluye una máquina virtual (Java), que ha sido desarrolada para muchos S.O's. 
+ 	3. El desarrollador puede usar un lenguaje estandarizado o una API. 
  	
+ Dificultades de bajo nivel en los S.O que no permiten que muchas aplicaciones corran en distintos S.O:
+ 	
+ 	1. Cada S.O tiene un formato binario para aplicaciones que indica la disposición del header, instrucciones y variables donde están en direcciones específicas.
+ 	2. Los CPU's tienen sets de instrucciones variados.
+ 	3. Los syscalls varían dependiendo del S.O.
+ 	
+ 	
+2.7 DISEÑO E IMPLEMENTACIÓN DEL S.O
+
+ 	1. Objetivos del diseño: se debe definir para qué va a ser el S.O, en alto nivel el diseño se ve afectado por el hardware. Los requerimentos pueden ser objetivos del usuario o del sistema. Debe ser conveniente y fácil de usar, seguros y rápidos. Debe ser fácil de implementar y de mantener. 
+ 	
+ 	2. Mecanismos y políticas: el mecanismo determina cómo hacer algo y las políticas qué se puede hacer. Las políticas pueden cambiar con el paso del tiempo, es necesario que ambos no estén tan ligados para que este cambio constante en las políticas no conlleve un cambio en el mecanismo.
+ 	
+ 	3. Implementación: hoy día muchos S.O están escritos en C, C++ y pequeñas porciones en ensamblador. Las ventajas de escribirlo en lenguajes de alto nivel es lo compacto, rápido de hacer, de depurar y es más portable hacia otro hardware. 
+ 	
+ 	
+2.8 ESTRUCTURA DE UN S.O
+ 
+ Para que funcione bien y sea fácil de modificar, los S.O se componen de modulos, que define una parte del sistema.
+ 
+ 	I. Estructura monolítica (una pieza): cargar todas las funcionalidades en el kernel. 
+ 	
+ 	II. Solución por capas: el sistema se divide en pequeños componentes con funcionalidades específicas. La ventaja es que cambios en un componente solo afecta a ese componente y no a los demás. En la solución por capas se busca la simplicidad de construir y depurar (capa0=hardware, capaN=interfaz de usuario). Una capa se implementa con operaciones provistas por capas más bajas, no le importa cómo se implementan, sino qué hacen. En general tienen un rendimiento pobre.
+ 	
+ 	III. Microkernels: este método estructura el S.O al remover componentes no esenciales del kernel e implementándolos como programas de user-level que residen en distintas direcciones de memoria, resultado: un kernel más pequeño. La función principal es de proveer comunicación entre un programa cliente y otros servicios corriendo igualmente en el user space. Permite portabilidad con distinto hardware, mayor seguridad y fiabilidad.
+ 	
+ 	IV. Módulos: el kernel tiene un set de copmonentes y puede linkear otros servicios con módulos en tiempo de ejecución o de arranque.
+ 	
+ 	V. Sistemas híbridos: sistemas que combinan diferentes estructuras para conseguir rendimiento y seguridad.
