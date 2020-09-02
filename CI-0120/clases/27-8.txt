@@ -1,1 +1,8 @@
-El pipeline es el camino lógico que siguen las instrucciones al momento de ir ejecutando.
+El pipeline es el camino lógico que siguen las instrucciones al momento de ir ejecutando y qué dispositivos lógicos del procesador se utilizan en el proceso.
+Modo de direccionamiento: cómo el procesador va a calcular la dirección de memoria.
+
+El S.O tiene una tabla de páginas que indica a qué dirección física corresponde una dirección virtual (donde están instrucciones o datos). Esta tabla está en memoria, entonces cuando el PC tiene una dirección virtual y necesita convertirla a una física, para no tener que ir a memoria de nuevo, una vez que se hace esa conversión se pasa a una TLB que se almacena en cachés y es más eficiente. Una vez que tiene la dirección física, se pide la instrucción a la caché de instrucciones.
+
+Los procesadores actuales son de control alambrado.
+
+Los procesadores de antes eran microprogramados: el procesador tenía una tabla y para cada una de las instrucciones CISC había un microprograma con microinstrucciones hasta completar la instrucción CISC como tal.
