@@ -1,261 +1,271 @@
+
+#include <string.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #include "Socket.h"
-
-/**
- * Crea el socket.
- * @param stream tipo del socket.
- * @param ipv6 protocol family del socket.
+#include <stdlib.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+/* 
+   char tipo: el tipo de socket que quiere definir
+      true para "stream
+      false para "datagram"
+   bool ipv6: si queremos un socket para IPv6
  */
-
-Socket :: Socket( bool stream, bool ipv6 ) {
-
-   if(ipv6) {
-      if(stream) {
-         idSocket = socket(AF_INET6, SOCK_STREAM, 0);
-      }
-      else {
-         idSocket = socket(AF_INET6, SOCK_DGRAM, 0);
-      }
-   } 
-   else {
-      if(stream) {
-         idSocket = socket(AF_INET, SOCK_STREAM, 0);
-      }
-      else {
-         idSocket = socket(AF_INET, SOCK_DGRAM, 0);
-      }
-   }
-
-   this->is_ipv6 = ipv6;
-   
-   if(-1 == idSocket) {
-      perror("Socket::Socket");
-      exit(0);
-   }
-
+Socket::Socket( bool stream, bool ipv6 ){
+  if(!ipv6){
+    this->ipv6 = false;
+    if(stream){
+      this->idSocket = socket(AF_INET, SOCK_STREAM, 0);
+    }else {
+      this->idSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    }
+    printf("Socket IPv4 creado\n" );
+  }else{
+    this->ipv6 = true;
+    if(stream){
+      this->idSocket = socket(AF_INET6, SOCK_STREAM, 0);
+    }else{
+      this->idSocket = socket(AF_INET6, SOCK_DGRAM, 0);
+    }
+    printf("Socket IPv6 creado\n" );
+  }
+  if(this->idSocket == -1){
+    printf("Error en crear Socket\n" );
+    exit(1);
+  }else{
+     printf("Socket Creado\n");
+  }
+  this->SSLContext = nullptr;
+  this->SSLStruct = nullptr;
 }
 
 
-/**
- * Crea una instancia Socket a partir de un id que ya ha sido asignado.
- * @param id el identificador del socket que ya ha sido creado.
- */
-
-Socket :: Socket( int id ) {
-
-   this->idSocket = id;
-   this->is_ipv6 = false;
-
-}
-
-
-/**
- * Destruye la instancia del socket.
- */
-
-Socket :: ~Socket(){
-
+Socket::~Socket(){
     Close();
+    if ( nullptr != this->SSLContext ) {
+      SSL_CTX_free( (SSL_CTX *) this->SSLContext );
+   }
+   if ( nullptr != this->SSLStruct ) {
+      SSL_free( (SSL *) this->SSLStruct );
+   }
+}
+
+
+void Socket::Close(){
+  if(int stat = close(idSocket) < 0){
+    printf("Error en destruir Socket\n" );
+    exit(2);
+  }
+}
+
+/*
+   char * hostip: direccion del servidor, por ejemplo "www.ecci.ucr.ac.cr"
+   int port: ubicacion del proceso, por ejemplo 80
+ */
+int Socket::Connect( const char * hostip, int port ) {
+
+  struct hostent *hp;
+  struct in_addr ip_addr;
+
+  hp = gethostbyname(hostip);
+  if (!hp) {
+    printf("Error en hostname\n");
+    exit(EXIT_FAILURE);
+  }
+  ip_addr = *(struct in_addr *)(hp->h_addr);
+  printf("IP: %s\n", inet_ntoa(ip_addr));
+  struct sockaddr_in addr;
+  addr.sin_family = AF_INET;
+  inet_aton(inet_ntoa(ip_addr), &addr.sin_addr); //transforma de IPv4  a binario para la estructura
+  addr.sin_port = htons(port);       //asigna el puerto a ser usado
+
+  if(connect(idSocket, (sockaddr*) &addr, sizeof(addr)) < 0){
+    printf("Error conectando\n");
+  }
+}
+
+
+/*
+   char * hostip: direccion del servidor, por ejemplo "www.ecci.ucr.ac.cr"
+   char * service: nombre del servicio que queremos acceder, por ejemplo "http"
+ */
+int Socket::Connect( const char *host, const char *service ) {
+  size_t len;
+  int st;
+  struct addrinfo hints, *result, *rp;
+  memset(&hints, 0, sizeof(struct addrinfo));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_flags = 0;
+  hints.ai_protocol = 0;
+
+  st = getaddrinfo( host, service, &hints, &result);
+  if(st != 0){
+    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(st));
+    exit(6);
+  }
+  for ( rp = result; rp; rp = rp->ai_next ) {
+    st = connect( this->idSocket, rp->ai_addr, rp->ai_addrlen );
+    if ( 0 == st )
+      break;
+  }
+
+  freeaddrinfo( result );
+
+  return st;
+}
+
+
+int Socket::Read( char *text, int len ) {
+  if(read(idSocket, text, len) <= 0){
+    printf("Error al leer\n");
+  }
+}
+
+
+int Socket::Write( char *text, int len ) {
+  if(send(idSocket, text, len, 0) < 0){
+    printf("Error al escribir\n");
+  }
+}
+
+
+int Socket::Listen( int queue ) {
+
+    return -1;
 
 }
 
 
-/**
- * Cierra y destruye el socket.
- */
+int Socket::Bind( int port ) {
 
-void Socket :: Close(){
-
-   if(-1 == close(idSocket)) {
-      perror("Socket::Close");
-      exit(0);
-   }
+    return -1;
 
 }
 
 
-/**
- * Conecta el socket a partir de una dirección y un puerto.
- * @param hostip string con la dirección del servidor.
- * @param port número de puerto al cual se va a hacer la conexión.
- * @return 0.
- */
+Socket * Socket::Accept(){
 
-int Socket :: Connect( const char * hostip, int port ) {
-
-   int conexion;
-
-   if(this->is_ipv6) {
-      struct sockaddr_in6 server_address6;
-      server_address6.sin6_flowinfo  = 0;
-      server_address6.sin6_family    = AF_INET6;
-      server_address6.sin6_port      = htons(port);
-      inet_pton(AF_INET6, hostip, &server_address6.sin6_addr);
-      conexion = connect(idSocket, (struct sockaddr *) &server_address6, sizeof(server_address6));
-   }
-   else {
-      struct sockaddr_in server_address;
-      server_address.sin_family   = AF_INET;
-      server_address.sin_port     = htons(port);
-      inet_pton(AF_INET, hostip, &server_address.sin_addr);
-      conexion = connect(idSocket, (struct sockaddr *) &server_address, sizeof(server_address));
-   }
-
-   if(-1 == conexion) {
-      perror("Socket::Connect");
-      exit(0);
-   }
-
-   return conexion;
+    //return -1;
 
 }
 
 
-/**
- * Lee información enviada por un servidor a partir de un socket.
- * @param text dirección de memoria donde se almacena el mensaje enviado por el servidor o el cliente.
- * @param len cantidad máxima de bytes que se leen de la información enviada por el servidor o el cliente.
- * @return la cantidad de bytes recibidos por el servidor o el cliente.
- */
+int Socket::Shutdown( int mode ) {
 
-int Socket :: Read( char * text, int len ) {
-
-   int r = read(idSocket, (void *) text, len);
-
-   if(-1 == r) {
-      perror("Socket::Read");
-      exit(0);
-   }
-
-   return r;
+    return -1;
 
 }
 
 
-/**
- * Envía información a un servidor o un ciente mediante un socket especificando el tamaño máximo del mensaje.
- * @param text dirección de memoria donde se encuentra el mensaje a enviar.
- * @param len cantidad máxima de bytes que se van a enviar.
- * @return la cantidad de bytes enviados.
- */
+void Socket::SetIDSocket(int id){
 
-int Socket :: Write( char * text, int len ) {
-
-   int w = write(idSocket, (const void *) text, len);
-
-   if(-1 == w) {
-      perror("Socket::Write");
-      exit(0);
-   }
-
-   return w;
-   
-}
-
-
-/**
- * Envía información a un servidor o un cliente mediante un socket sin especificar el tamaño máximo del mensaje.
- * @param text dirección de memoria donde se encuentra el mensaje a enviar.
- * @return la cantidad de bytes enviados.
- */
-
-int Socket :: Write( char * text ) {
-
-   int w = write(idSocket, (const void *) text, strlen((const char *) text));
-
-   if(-1 == w) {
-      perror("Socket::Write");
-      exit(0);
-   }
-
-   return w;
+    idSocket = id;
 
 }
 
 
-/**
- * Marca un socket como pasivo pues será el que escucha por nuevas conexiones para aceptarlas.
- * @param queue cantidad máxima de conexiones encoladas esperando ser atendidas por el servidor.
- * @return 0.
+// SSL methods
+
+/*
+ *
  */
+void Socket::InitSSLContext() {
+   const SSL_METHOD * method = TLS_client_method();
+   SSL_CTX * context = SSL_CTX_new( method );
 
-int Socket :: Listen( int queue ) {
+   if ( nullptr == context ) {
+        perror( "Socket::InitSSLContext" );
+        exit( 23 );
+    }
 
-   int l = listen(idSocket, queue);
-
-   if(-1 == l) {
-      perror("Socket::Listen");
-      exit(0);
-   }
-
-   return l;
+    this->SSLContext = (void *) context;
 
 }
 
 
-/**
- * Le asigna y le asocia una dirección al socket.
- * @param port número de puerto por el cual el socket va a estar asociado. 
- * @return 0.
+/*
+ *
  */
+void Socket::InitSSL() {
 
-int Socket :: Bind( int port ) {
-
-   struct sockaddr_in server_address;
-   server_address.sin_family      = AF_INET;
-   server_address.sin_addr.s_addr = htonl(INADDR_ANY);
-   server_address.sin_port        = htons(port);
-
-   int b = bind(idSocket, (const struct sockaddr *) &server_address, sizeof(server_address));
-
-   if(-1 == b) {
-      perror("Socket::Bind");
-      exit(0);
+   this->InitSSLContext();
+   SSL * ssl = SSL_new( ((SSL_CTX *) this->SSLContext ) );
+   if ( nullptr == ssl ) {
+      perror( "Socket::InitSSL" );
+      exit( 23 );
    }
-
-   return b;
+   this->SSLStruct = (void *) ssl;
 
 }
 
 
-/**
- * Acepta la primera conexión pendiente de la cola que posee el socket que está haciendo listen,
- * por lo que crea un nuevo socket para que esa conexión pendiente se comunique directamente con el servidor.
- * @return una instancia de la clase Socket que posee el id retornado por el syscall accept.
- * 
+/*
+ * get host by name
  */
+void Socket::SSLConnect( char * host, int port ) {
+   int resultado;
 
-Socket * Socket :: Accept() {
+   this->Connect( host, port );	// Establish a non ssl connection first
+   SSL_set_fd( (SSL *) this->SSLStruct, this->idSocket );
+   resultado = SSL_connect( (SSL *) this->SSLStruct );
+   if ( -1 == resultado ) {
+      perror( "Socket::SSLConnect" );
+      exit( 23 );
+   }
+}
 
-   struct sockaddr_in server_address;
-   socklen_t server_address_size = sizeof(server_address);
-   
-   int a = accept(idSocket, (struct sockaddr *) &server_address, &server_address_size);
 
-   if(-1 == a) {
-      perror("Socket::Accept");
-      exit(0);
+/*
+ *
+ */
+void Socket::SSLConnect( char * host, char * service ) {
+   int resultado;
+
+   this->Connect( host, service );
+   SSL_set_fd( (SSL *) this->SSLStruct, this->idSocket );
+   resultado = SSL_connect( (SSL *) this->SSLStruct );
+   if ( -1 == resultado ) {
+      perror( "Socket::SSLConnect" );
+      exit( 23 );
+   }
+}
+
+
+/*
+ *
+ */
+int Socket::SSLRead( void * buffer, int size ) {
+   int resultado;
+
+   resultado = SSL_read( (SSL *) this->SSLStruct, buffer, size );
+   if ( -1 == resultado ) {
+      perror( "Socket::SSLRead" );
+      exit( 23 );
    }
 
-   return new Socket(a);
+   return resultado;
 
 }
 
 
-/**
- * Apaga una conexión asociada al socket.
- * @param how define cómo se va apagar, si las recepciones o transmisiones se desactivan o no.
- * @return 0.
+/*
+ *
  */
+int Socket::SSLWrite( const void *buffer, int size ) {
+   int resultado;
 
-int Socket :: Shutdown( int how ) {
-
-   int s = shutdown(idSocket, how);
-
-   if(-1 == s) {
-      perror("Socket::Shutdown");
-      exit(0);
+   resultado = SSL_write( (SSL *) this->SSLStruct, buffer, size );
+   if ( -1 == resultado ) {
+      perror( "Socket::SSLWrite" );
+      exit( 23 );
    }
 
-   return s;
+   return resultado;
 
 }

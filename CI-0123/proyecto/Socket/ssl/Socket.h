@@ -7,14 +7,6 @@
  *  los metodos necesarios para los clientes, en la otra etapa los otros
  *  metodos para los servidores
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <cstring>
 
 #ifndef Socket_h
 #define Socket_h
@@ -24,21 +16,34 @@ class Socket{
     public:
         Socket( bool, bool = false );
         Socket( int );
+        Socket( );   //constructor generico para IPv4 Stream
         ~Socket();
         int Connect( const char *, int );
+        int Connect( const char *, const char * );
+        void Close();
         int Read( char *, int );
         int Write( char *, int );
         int Write( char * );
         int Listen( int );
         int Bind( int );
+        Socket * Accept();
         int Shutdown( int );
         void SetIDSocket( int );
-        void Close();
-        Socket * Accept();
-        
+        void InitSSL();
+        void SSLConnect( char *, int );
+        void SSLConnect( char *, char * );
+        int SSLRead( void *, int );
+        int SSLWrite( const void *, int );
     private:
+        
+        
         int idSocket;
-        bool is_ipv6;
+        bool ipv6;
+        void * SSLContext;      // SSL context
+        void * SSLStruct;     // SSL BIO
+        void InitSSLContext();
+
+
 };
 
 #endif

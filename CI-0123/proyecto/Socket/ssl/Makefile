@@ -1,8 +1,13 @@
-all: MirrorClient MirrorServer 
 
-MirrorClient: MirrorClientTest.cc Socket.cc
-	g++ MirrorClientTest.cc Socket.cc -o MirrorClient
 
-MirrorServer: MirrorServerTest.cc Socket.cc
-	g++ MirrorServerTest.cc Socket.cc -o MirrorServer
+# Makefile Semana 4
+#
 
+SSLtest: SSLtest.o Socket.o
+	g++ -g SSLtest.o Socket.o -o SSL -lssl -lcrypto
+
+Socket.o: Socket.h Socket.cc
+	g++ -g -c Socket.cc -lssl -lcrypto
+
+SSLtest.o: SSLtest.cc Socket.h
+	g++ -g -c SSLtest.cc -lssl -lcrypto
