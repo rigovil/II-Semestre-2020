@@ -1,0 +1,6 @@
+formato de los paquetes de red
+capa de transporte, puertos
+configuración de servidores, arquitectura de red donde están los servidores
+
+nic costa rica -> dns
+dominios de primer nivel, segundo nivel, etc.
