@@ -1,0 +1,65 @@
+CXX      := -g++ -Wwrite-strings -pthread
+BUILD    := ./build
+INCLUDE  := -I include/
+OBJ_DIR  := obj
+APP_DIR  := bin
+
+# Programa1
+TARGET_0 := Programa0
+SRC_0    := src/EjemploHolaMundo.cpp
+OBJ_0    := $(SRC_0:%.cpp=$(OBJ_DIR)/%.o)
+
+# Programa2
+TARGET_1 := Programa1
+SRC_1    := src/EjemploSuma.cpp src/EjemploRecursoCompartido.cpp
+OBJ_1    := $(SRC_1:%.cpp=$(OBJ_DIR)/%.o)
+
+# Programa3
+TARGET_2 := Programa2
+SRC_2    := src/EjemploResta.cpp src/EjemploRecursoCompartido.cpp
+OBJ_2    := $(SRC_2:%.cpp=$(OBJ_DIR)/%.o)
+
+
+Programa0: build $(APP_DIR)/$(TARGET_0)
+
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(INCLUDE) -c $< -o $@ 
+
+$(APP_DIR)/$(TARGET_0): $(OBJ_0)
+	@mkdir -p $(@D)
+	$(CXX) -o $(APP_DIR)/$(TARGET_0) $^ 
+
+Programa1: build $(APP_DIR)/$(TARGET_1)
+
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(INCLUDE) -c $< -o $@ 
+
+$(APP_DIR)/$(TARGET_1): $(OBJ_1)
+	@mkdir -p $(@D)
+	$(CXX) -o $(APP_DIR)/$(TARGET_1) $^ 
+
+Programa2: build $(APP_DIR)/$(TARGET_2)
+
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(INCLUDE) -c $< -o $@ 
+
+$(APP_DIR)/$(TARGET_2): $(OBJ_2)
+	@mkdir -p $(@D)
+	$(CXX) -o $(APP_DIR)/$(TARGET_2) $^ 
+
+# Makefile
+build:
+	@mkdir -p $(APP_DIR)
+	@mkdir -p $(OBJ_DIR)
+
+debug: CXXFLAGS += -g -DDEBUG 
+debug: all
+
+release: CXXFLAGS += -O2
+release: all
+
+clean:
+	-@rm -rvf $(OBJ_DIR)/* $(APP_DIR)/$(TARGET_0) $(APP_DIR)/$(TARGET_1) $(APP_DIR)/$(TARGET_2) 
