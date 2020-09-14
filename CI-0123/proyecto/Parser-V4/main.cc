@@ -1,3 +1,4 @@
+// https://stackoverflow.com/questions/6755250/format-output-in-a-table-c
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -10,11 +11,12 @@
 #include <sys/time.h>
 #include "Reader.h"
 #include "Parser.h"
+#include "TextTable.h"
 
 
 #define NUMBER_SERVERS  1               /* Valor utilizado para indicar el número de servidores a los que se les va a solicitar información. */
 #define RAW_FILE_NAME   "covid_raw.txt" /* Valor utilizado para indicar el nombre del archivo donde se encuentra el código fuente del servidor. */
-#define PARSED_FILE		  "covid.csv"		  /* Valor utilizado para indicar el nombre del archivo donde se encuentran los datos filtrados. */
+#define PARSED_FILE		  "covid.csv"	    /* Valor utilizado para indicar el nombre del archivo donde se encuentran los datos filtrados. */
 #define WORKERS         4               /* Valor utilizado para indicar la cantidad de trabajadores que van a analizar el código fuente de un servidor. */
 #define SEM_ON          1               /* Valor utilizado para indicar que un semáforo se inicializa con el valor de 1. */
 #define SEM_OFF         0               /* Valor utilizado para indicar que un semáforo se inicializa con el valor de 0. */
@@ -22,8 +24,8 @@
 #define ZERO            0               /* Valor utilizado en las estructuras de control if y for. */
 #define EXIT            0               /* Valor utilizado como parámetro para salir del programa en caso de error. */
 #define ERROR           -1              /* Valor utilizado para identificar un error en alguna función. */
-#define CR              "costa rica"    /* Valor utilizado para identificar a Costa Rica. */
-#define CA              "centroamerica" /* Valor utilizado para identificar la región centroamericana. */
+#define CR              1               /* Valor utilizado para identificar a Costa Rica. */
+#define CANTON          2               /* Valor utilizado para identificar que se quiere buscar un cantón específico. */
 #define DELIMITER       ','             /* Valor utilizado para delimitar los datos de un cantón/región/país. */
 #define NEW_LINE        '\n'            /* Valor utilizado para almacenar un caracter de salto de línea. */
 #define ERASE1          '"'             /* Valor utilizado para almacenar un caracter que se elimina de los datos parseados. */
@@ -33,8 +35,9 @@
 
 void serverReader(std::string, int);
 void serverParser(Reader *, Parser *, int);
-void covidData(std::string);
-void despliegaDatosDelLugar(std::ifstream&, std::string);
+void findCanton(std::ifstream&, std::string);
+void covidData(int, std::ifstream&);
+// void cantonesCR(std::ifstream&);
 std::string translator(std::string);
 
 
@@ -48,69 +51,45 @@ std::string translator(std::string);
 
 int main(int argc, char ** argv) {
 
+  int answer;
   std::vector<std::string> server_address;
   std::vector<int> workers;
+  std::ifstream file(PARSED_FILE);
     
   std::thread servers[NUMBER_SERVERS];
   server_address.push_back(RAW_FILE_NAME);
   workers.push_back(WORKERS);
 
-	int resp = 0;
-	std::cout << "Digite 1 para ver las informacion de Costa Rica: ";
-	std::cin >> resp;
+  for(int i = ZERO; i < NUMBER_SERVERS; ++i) {
+
+    servers[i] = std::thread(serverReader, server_address[i], workers[i]);
+
+  }
+
+  for(int i = ZERO; i < NUMBER_SERVERS; ++i) {
+
+    servers[i].join();
+
+  }
 	
-	if( 1 == resp){
-		covidData("CR");
+	std::cout << "\n1. Cantones de Costa Rica\n";
+	std::cout << "2. Cantón específico\n\n";
+	std::cout << "Ingrese una opción: ";
+	std::cin >> answer;
+	
+	if(CR == answer){
+		covidData(CR, file);
+	}
+	else if(CANTON == answer) {
+		covidData(CANTON, file);
 	}
 	
-	
-	
-    /**
-     * 
-     * Aquí va el código que le pide al usuario si quiere ver la info de un cantón específico o de Costa Rica.
-     * Falta implementar el método covidData que es el que despliega la información de los datos.
-     * 
-     */
-
-
-    /**
-     * 
-     * Aquí va el código que verifica si ya hay un archivo en disco que contiene la información 
-     * que pide el usuario a partir de la fecha en que lo solicita.
-     * Si ese archivo ya existe entonces los siguientes dos ciclos for no se ejecutarían.
-     *
-     */
-
-
-  for(int i = ZERO; i < NUMBER_SERVERS; ++i) {
-
-      servers[i] = std::thread(serverReader, server_address[i], workers[i]);
-
-  }
-
-  for(int i = ZERO; i < NUMBER_SERVERS; ++i) {
-
-      servers[i].join();
-
-  }
-	
-	std::string convertir = "   San  José  áéíóú áéíóú áéíóú";
-	std::cout << "Convertir: " << convertir << std::endl;
-	convertir = translator(convertir);
-	std::cout << "Convertido: " << convertir << std::endl;
-
-  /**
-   * 
-   * Aquí se llama a la función covidData() que despliega la información en formato de tabla.
-   * 
-   */
-  std::ifstream file("covid.csv");
-  std::string lugarABuscar = "San José";
-  despliegaDatosDelLugar(file, translator(lugarABuscar));
+  file.close();
 
   return 0;
 
 }
+
 
 /**
  * elimina tildes, espacios, pasa a lower_case
@@ -156,14 +135,25 @@ std::string translator(std::string aBuscar){
   }
 
   return sModificado;
+  
 }
 
 
-void despliegaDatosDelLugar(std::ifstream &file, std::string lugarABuscar){
-  
-  bool found = false;
-  std::string line, data;
+/**
+ * Le solicita al usuario el nombre de un cantón y busca los datos de COVID-19 de ese cantón en el archivo con los datos filtrados.
+ * @param file objeto que guarda el archivo que contiene los datos filtrados.
+ * @return un std::string con los datos de COVID-19 del cantón solicitado.
+ */
 
+std::string findCanton(std::ifstream &file) {
+
+  bool found = false;
+  std::string line, data, answer;
+
+  std::cout << "Ingrese el nombre del cantón: ";
+  std::cin >> answer;
+  answer = translator(answer);
+  
   while(getline(file, line) && !found) {
 
     int i = ZERO;
@@ -171,8 +161,8 @@ void despliegaDatosDelLugar(std::ifstream &file, std::string lugarABuscar){
 
     while(getline(stream, data, DELIMITER) && !found) {
 
-      if(!i && translator(data) == translator(lugarABuscar)) {
-        std::cout << line << "\n";
+      if(!i && !answer.compare(translator(data))) {
+        answer = line;
         found = true;
       }
 
@@ -182,7 +172,12 @@ void despliegaDatosDelLugar(std::ifstream &file, std::string lugarABuscar){
 
   }
 
-  file.close();
+  if(!found) {
+    std::cout << "El cantón no fue encontrado.\n";
+    exit(EXIT);
+  }
+
+  return answer;
 
 }
 
@@ -209,36 +204,35 @@ void serverReader(std::string server_address, int workers) {
 
   for(i = ZERO; i < workers; ++i) {
 
-      if(i == ZERO) {
-          result = sem_init(&semaphores[i], PSHARED, SEM_ON);
-      }
-      else {
-          result = sem_init(&semaphores[i], PSHARED, SEM_OFF);
-      }
+    if(i == ZERO) {
+      result = sem_init(&semaphores[i], PSHARED, SEM_ON);
+    }
+    else {
+      result = sem_init(&semaphores[i], PSHARED, SEM_OFF);
+    }
 
-      if(ERROR == result) {
-          perror("main:serverReader:sem_init");
-          exit(EXIT);
-      }
+    if(ERROR == result) {
+        perror("main:serverReader:sem_init");
+        exit(EXIT);
+    }
 
-      threads[i] = std::thread(serverParser, reader, parser, i);
+    threads[i] = std::thread(serverParser, reader, parser, i);
 
   }
 
   for(i = ZERO; i < workers; ++i) {
 
-      threads[i].join();
-      result = sem_destroy(&semaphores[i]);
+    threads[i].join();
+    result = sem_destroy(&semaphores[i]);
 
-      if(ERROR == result) {
-          perror("main:serverReader:sem_destroy");
-          exit(EXIT);
-      }
+    if(ERROR == result) {
+      perror("main:serverReader:sem_destroy");
+      exit(EXIT);
+    }
 
   }
 
-	file.open(PARSED_FILE);       /* Archivo que se crea en disco */
-	// file << "Lugar" << DELIMITER << "Activos" << DELIMITER  << "Recuperados" << DELIMITER  << "Fallecidos" << DELIMITER  << "Recuperados\n";
+	file.open(PARSED_FILE);
 
   for(it = parser->regions.begin(); it != parser->regions.end(); ++it) {
 
@@ -249,28 +243,28 @@ void serverReader(std::string server_address, int workers) {
     while(getline(stream, data, DELIMITER)) {
 
       if(!i) {
-        data.erase(std::remove(data.begin(), data.end(), ERASE1), data.end());      /* Borra las comillas " */
-        data.erase(std::remove(data.begin(), data.end(), ERASE2), data.end());      /* Borra el paréntesis cuadrado [ */
+        data.erase(std::remove(data.begin(), data.end(), ERASE1), data.end());
+        data.erase(std::remove(data.begin(), data.end(), ERASE2), data.end());
         file << data << DELIMITER;
       }
       else {
-        data.erase(std::remove(data.begin(), data.end(), ERASE3), data.end());      /* Borra el paréntesis cuadrado ] */
+        data.erase(std::remove(data.begin(), data.end(), ERASE3), data.end());
         file << data << DELIMITER;
       }
 
       ++i;
 
-      }
-
-      file << NEW_LINE;
-
     }
 
-    file.close();
+    file << NEW_LINE;
 
-    delete semaphores;
-    delete parser;
-    delete reader;
+  }
+
+  file.close();
+
+  delete semaphores;
+  delete parser;
+  delete reader;
 
 }
 
@@ -285,12 +279,14 @@ void serverReader(std::string server_address, int workers) {
 
 void serverParser(Reader * reader, Parser * parser, int worker) {
 
-    std::string line;
+  std::string line;
 
-    while(reader->hasNext(worker)) {
-        line = reader->getNext(worker);
-        parser->readLine(line);
-    }
+  while(reader->hasNext(worker)) {
+
+    line = reader->getNext(worker);
+    parser->readLine(line);
+
+  }
 
 }
 
@@ -298,15 +294,43 @@ void serverParser(Reader * reader, Parser * parser, int worker) {
 /**
  * Muestra información del COVID-19 en la región solicitada por el usuario.
  * @param region region solicitada por el usuario.
+ * @param file objeto que guarda el archivo que contiene los datos filtrados.
  */
 
-void covidData(std::string region) {
+void covidData(int region, std::ifstream &file) {
 	
-    if(region == CR) {
-      
-    }
-    else {
-        
-    }
+  if(region == CR) {
+		TextTable t( '-', '|', '+' );
+		std::string line, data;
+		
+		t.add( "Lugar" );
+		t.add( "Activos" );
+		t.add( "Recuperados" );
+		t.add( "Fallecidos" );
+		t.add( "Acumulados" );
+		t.endOfRow();
+		
+		while( getline(file, line) ) {
+
+			std::stringstream stream(line);
+			while( getline(stream, data, DELIMITER) ) {
+				//std::cout << line << "\t";
+				//std::cout << data << "\t";
+				t.add( data );
+			}
+			
+			t.endOfRow();
+			//std::cout << std::endl;
+		}
+
+		file.close();
+		t.setAlignment( 2, TextTable::Alignment::RIGHT );
+		std::cout << t;
+		
+  }
+  else if(region == CANTON) {
+    std::string data = findCanton(file);
+    std::cout << data << "\n";
+  }
 
 }

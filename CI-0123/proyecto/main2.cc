@@ -34,7 +34,7 @@
 void serverReader(std::string, int);
 void serverParser(Reader *, Parser *, int);
 void covidData(std::string);
-std::string manejaExpresionesDeConsulta(std::string);
+std::string translator(std::string);
 void despliegaDatosDelLugar(std::ifstream&, std::string);
 
 
@@ -96,7 +96,7 @@ int main(int argc, char ** argv) {
 	
 	std::string convertir = "   San  José  áéíóú áéíóú áéíóú";
 	std::cout << "Convertir: " << convertir << std::endl;
-	convertir = manejaExpresionesDeConsulta(convertir);
+	convertir = translator(convertir);
 	std::cout << "Convertido: " << convertir << std::endl;
 
     /**
@@ -160,35 +160,20 @@ std::string manejaExpresionesDeConsulta(std::string aBuscar){
 
 
 void despliegaDatosDelLugar(std::ifstream &file, std::string lugarABuscar){
-  //string lugarEnFile;
-  //el if tiene que ir dentro de un While/For que recorre el file (documento)
-  //lugarEnFile = lo que esté antes de la primer coma;
-  //if(manejaExpresionesDeConsulta(lugarABuscar) == manejaExpresionesDeConsulta(lugarEnFile)){
-  //desplegar los valores en esa fila/linea
-  //}
-  char lineaActual[128];
-  //fstream fe("streams.cpp");
-  int i = 0, j = 0;
-  while(!file.eof()) {
-    
-    file >> lineaActual;
-    std::string parser;
-    
-    //lineaActual = manejaExpresionesDeConsulta(lineaActual);
-    std::stringstream s_stream(lineaActual);
-    while(getline(s_stream, parser, ',')){
-      if(!i){
-        std::cout << "Nombre Cantón: " << parser << "\n";
+  bool found = false;
+  std::string line, data;
+  
+  while(getline(file, line) && !found){
+    int i = ZERO;
+    std::stringstream stream(line);
+    while(getline(stream, data, DELIMITER) && !found){
+      if((!i) && translator(data) == translator(lugarABuscar)){
+        std::cout << line << "\n";
+        found = true;
       }
-      if(4 == i){
-        i=0;
-      } else{
-        ++i;
-      }
+      ++i;
     }
-    
   }
-
   file.close();
 }
 /**

@@ -1,0 +1,18 @@
+x0 siempre tiene 0 y no puede ser un registro destino.
+load: a registro
+store: a memoria -> sw x1,24(x6) -> guarda en M[24+x6] lo que está en x1
+
+CPI: número de ciclos entre el WB de una instrucción y el WB de la instrucción anterior. El CPI de la primera instrucción es 1. El CPI de todas las instrucciones se suman y se divde entre el número de instrucciones. 
+El forwarding lo que hace es que una instrucción anterior le envía lo que necesita a una instrucción posterior (no necesariamente son instrucciones seguidas una de otra), pero lo que una instrucción recibe es de un ciclo anterior de otra instrucción.
+
+Conflictos de control: cuando hay un salto condicional, la siguiente instrucción no se sabe si es la que realmente sigue porque la condición aún no se ha evaluado y de ser cierta, modificaría el PC y la siguiente instrucción no es realmente la que sigue, sino una que no se sabe cuál es. 
+Cuando se codifica un branch o salto, la instrucción a la que debe ir en realidad es la cantidad de instrucciones que debe saltar desde ahí hasta la dirección destino si la condición se cumple. Un branch se resuelve en EX, ahí se hace la comparación y se envía un 1 o un 0 para indicar al NPC (new pc) si debe saltar o no a la dirección del salto.
+
+Cuando hay un branch o salto, hay varias soluciones: detener el pipeline, una vez que el branch entra a ID (donde se sabe que es un salto), la siguiente instrucción se mata (haría IF pero no lo hace) y se espera hasta que la instrucción del branch determine si hace el salto o no y ahí se le envía el dato del NPC para que siga la instrucción de acuerdo con la condición si se cumple o no.
+EJ:
+	beq x12,x0,skip		IF ID EX M WB
+       instruccion que se mata
+  skip  or  x7,x8,x9				 IF ID EX M WB
+  
+  esto es si la condición es verdadera, después del EX se sabe si hay que saltar a skip o no, como es verdadero entonces sí salta. En esta solución, la siguiente instrucción del branch siempre tiene un CPI de 3.
+La siguiente solución es una predicción, el procesador predice si va a saltar o no y deja seguir las instrucciones en el orden en que vienen, si no salta y el procesador predijo que no iba a saltar, entonces las instrucciones que siguieron sí debían seguir. Si el procesador no acierta la predicción, cuando se da cuenta que no lo predijo (cuando el branch hace EX), entonces las instrucciones que se dejaron seguir se matan y continúa donde se hizo el salto. Si no acierta, la siguiente instrucción tiene un CPI de 3 igualmente.

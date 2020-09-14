@@ -1,0 +1,14 @@
+PRIMER VIDEO
+
+Una instrucción se emite cuando pasa la fase de ID/EX en el pipeline de RISC-V. 
+Un procesador superescalar es aquel que permite emitir más de una instrucción en un ciclo de reloj utilizando un decodificador de instrucciones que llegan juntas a partir de una cierta cantidad de bytes. Se busca que no ocupen mucha energía.
+
+-------------
+
+SEGUNDO VIDEO
+
+Una instrucción ocupa una unidad funcional propia para no afectar a otra instrucción o que le afecten a ella.
+
+RISC-V tiene 32 registros para enteros, x0 siempre vale 0. Tiene 32 registros para flotantes y se identifican con f0, f1, etc. Load: trae de memoria, store: escribe en memoria.
+
+Cuando hay conflictos de datos entre instrucciones, antes se usaba la técnica de detener el pipeline. La otra técnica es el forwarding, en esta técnica, si una instrucción va a utilizar un registro que la instrucción anterior va a modificar, no es necesario que se espere a que haga el WB (write back), sino que hace la etapa ID pero sin obtener el valor del registro, y cuando empieza EX se espera a que le llegue el valor de la instrucción anterior pues esa ya va a tener el valor del registro cuando termine su EX (si usa el ALU) o de M (si trae de memoria). Hay 3 puntos donde se hace forwarding: al final de EX, y dos al final de MEM, y 5 puntos donde llegan: multiplexores en EX y uno en MEM.
