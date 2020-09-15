@@ -1,0 +1,11 @@
+Una predicción no tomado es estática y se hace por hardware pero no se analiza realmente si se puede saltar o no, solamente se predice que no va a saltar. Esta predicción sirve en if, en ciclos no tanto. Predicción tomada no se hace de manera estática.
+
+La siguiente solucción es la de branch retrasado: mientras el branch se está resolviendo, el procesador realiza otas instrucciones. Estas instrucciones las da el compilador, él pone después del branch las instrucciones que quiere que se ejecuten mientras se resuelve el branch. Es por esto que en esta solución el procesador y el compilador hacen un trabajo conjunto. El compilador saca las instrucciones arriba del branch, pues estas no afectan la condición del branch, además de que no dependen del branch y no tienen conflictos entre ellas.
+Estas instrucciones "buenas" se empiezan a ejecutar después de que comienza la instrucción del branch, de manera que cuando se sepa la condición del branch, la siguiente instrucción después de estas instrucciones "buenas" será la que corresponda de si la condición es falsa o verdadera. 
+Instrucciones "buenas" son las que están entre el branch y la instrucción que se ejecuta cuando se sabe la condición, la cantidad de estas instrucciones "buenas" depende del retraso que genera un branch usualmente, si el CPI es de 3 entonces habrán 2 instrucciones. El compilador debe saber cuáles instrucciones poner ahí, algunos compiladores ponen ninguna operación "no ops". Entonces, lo que pasa es que el compilador acomoda el código en ensamblador de cierta manera que el branch está en una posición que permita poner después estas operaciones buenas
+
+|-----------------------|
+|PIPELINE PARA FLOTANTES|
+|-----------------------|
+
+
