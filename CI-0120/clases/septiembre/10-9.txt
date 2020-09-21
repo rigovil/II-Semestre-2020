@@ -1,0 +1,14 @@
+cuando el compilador está codificando un branch, en lugar de codificar la etiqueta se pone cuántas instrucciones se debe saltar en caso de cumplir la condición.
+Ej:
+
+  0x80		bne	x1, x8, AHI
+  0x84		add 	...
+  0x88			...
+  0x92			...
+  0x96	 AHI	lw	...
+  
+Cuando se está haciendo el branch, el NPC pasa a ser 0x84 entonces como son 3 instrucciones las que debe saltar, se hace 0x84 + 3*4 (cada instrucción mide 4 bytes), entonces salta a 0x96. Esa dirección se calcula siempre que el branch sea verdadero o falso, se calcula en ID antes de hacer la comparación en EX.
+
+No se hace predicción tomada estática porque es más caro y más lento, se mata una instrucción porque hasta ID se sabe que es un branch entonces la que sigue ya ha hecho IF y tiene que matarse.
+
+Otra solución es la predicción dinámica, esta se hace mientras está corriendo el programa, se decide si se va a hacer predicción no tomada  o predicción tomada. Depende de lo que pase en el branch se decide si se hace una u otra. Además se toma en cuenta que, cuando el branch está en ID, siempre se calcula la dirección que tiene la etiqueta. Entonces la primera vez que se ejecuta un branch, como no se sabe qué va a pasar, se suele utilizar predicción no tomada pero ya habiendo calculado la dirección de la etiqueta, por lo que esta no se pierde y se guarda en una tabla que tiene el procesador.
