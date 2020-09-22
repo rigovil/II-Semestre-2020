@@ -12,3 +12,5 @@ Cuando se está haciendo el branch, el NPC pasa a ser 0x84 entonces como son 3 i
 No se hace predicción tomada estática porque es más caro y más lento, se mata una instrucción porque hasta ID se sabe que es un branch entonces la que sigue ya ha hecho IF y tiene que matarse.
 
 Otra solución es la predicción dinámica, esta se hace mientras está corriendo el programa, se decide si se va a hacer predicción no tomada  o predicción tomada. Depende de lo que pase en el branch se decide si se hace una u otra. Además se toma en cuenta que, cuando el branch está en ID, siempre se calcula la dirección que tiene la etiqueta. Entonces la primera vez que se ejecuta un branch, como no se sabe qué va a pasar, se suele utilizar predicción no tomada pero ya habiendo calculado la dirección de la etiqueta, por lo que esta no se pierde y se guarda en una tabla que tiene el procesador.
+
+Los predictores son autómatas de estado finito, usan un esquema de predicción de 2 bits para indicar 4 posibles estados, el primero es hacer una predicción no tomada y a partir de ahí, dependiendo del resultado del branch, se cambia de estado. Hay un predictor para cada branch.
