@@ -73,56 +73,57 @@ std::string translator(std::string);
  */
 
 int main(int argc, char ** argv) {
-
+  
   int answer;
   std::vector<std::string> server_address;
   std::vector<int> workers;
-
+  
   if(query()) {
     getFile();
-
+    
     std::thread servers[NUMBER_SERVERS];
     server_address.push_back(RAW_FILE_NAME);
     workers.push_back(WORKERS);
-
+    
     for(int i = ZERO; i < NUMBER_SERVERS; ++i) {
-
+      
       servers[i] = std::thread(serverReader, server_address[i], workers[i]);
-
+      
     }
-
+    
     for(int i = ZERO; i < NUMBER_SERVERS; ++i) {
-
+      
       servers[i].join();
-
+      
     }
+	
   }
   else {
     std::cout << "\nYa se poseen los datos más recientes.\n";
   }
-	
+  
   std::ifstream file(PARSED_FILE);
   std::ifstream file_menu(MENU);
   std::stringstream menu;
-
+  
   file_menu.open(MENU);
   menu << file_menu.rdbuf();
-
+  
   std::cout << menu.str();
   std::cin >> answer;
-    
+  
   if(CR == answer) {
     covidData(CR, file);
   }
   else if(CANTON == answer) {
     covidData(CANTON, file);
   }
-	
+  
   file.close();
   file_menu.close();
-
+  
   return ZERO;
-
+  
 }
 
 
@@ -134,8 +135,8 @@ int main(int argc, char ** argv) {
 
 std::string translator(std::string region) {
 
-  region.erase(std::remove(region.begin(), region.end(), CHAR4), region.end()); // borra espacios
-  std::for_each(region.begin(), region.end(), [](char & c) { c = ::tolower(c); }); // convierte a minúscula
+  region.erase(std::remove(region.begin(), region.end(), CHAR4), region.end());
+  std::for_each(region.begin(), region.end(), [](char & c) { c = ::tolower(c); });
 
   for(int i = ZERO; i < SIZE; ++i) {
 
@@ -160,51 +161,56 @@ std::string translator(std::string region) {
  */
 
 std::string findRegion(std::ifstream &file) {
-
+  
   bool found = false, first = true;
-  char * block[NAME_MAX_SIZE];
-  std::string line, data, answer;
+  char * block;
+  std::string line, data, answer, old_answer;
+
+  block = (char *) malloc(NAME_MAX_SIZE * sizeof(char));
   
   std::cout << "Ingrese el nombre del cantón:\n";
+  
+  std::cin.getline(block, NAME_MAX_SIZE);
+  std::cin.getline(block, NAME_MAX_SIZE);
+  
+  answer      = std::string(block);
+  answer      = translator(answer);
+  old_answer  = answer;
 
-  std::cin.getline(*block, NAME_MAX_SIZE);
-  std::cin.getline(*block, NAME_MAX_SIZE);
-
-  answer = std::string(*block);
-  answer = translator(answer);
-
+  free(block);
+  
   while(getline(file, line) && !found) {
-
+    
     if(!first) {
       int i = ZERO;
       std::stringstream stream(line);
-
+      
       while(getline(stream, data, DELIMITER) && !found) {
-
+        
         if(!i && !answer.compare(translator(data))) {
           answer = line;
           found = true;
         }
-
+        
         ++i;
-
+        
       }
     }
     else {
       first = false;
     }
-
+    
   }
 
-  if(!found) {
+  if(!found || !old_answer.compare(translator(INFO1))) {
     std::cout << "\nEl cantón no fue encontrado.\n";
     exit(EXIT);
   }
-
+  
   file.seekg(ZERO);
-
+  
   return answer;
-
+  
 }
 
 
@@ -260,7 +266,7 @@ void serverReader(std::string server_address, int workers) {
 
   }
 
-	file_r.open(PARSED_FILE);
+  file_r.open(PARSED_FILE);
   std::getline(file_r, date);
   file_r.close();
 
@@ -298,15 +304,15 @@ void serverReader(std::string server_address, int workers) {
     }
 
     file_w.close();
-
+	
   }
-
-  remove(RAW_FILE_NAME);
 
   delete semaphores;
   delete parser;
   delete reader;
 
+  remove(RAW_FILE_NAME);
+  
 }
 
 
@@ -468,16 +474,6 @@ void getFile() {
 
   memset(buf, ZERO, S_SIZE);
 
-  if(file = fopen(RAW_FILE_NAME, "r")) {
-
-    if(ZERO != ret) {
-      perror("getFile:fopen:'r'");
-      exit(EXIT);
-    }
-
-    fclose(file);
-  }
-
   file = fopen(RAW_FILE_NAME, "w");
 
   if(NULL == file){
@@ -516,6 +512,7 @@ void getFile() {
 
   }
 
+  fclose(file);
   switch(head) {
 
     case 200:
