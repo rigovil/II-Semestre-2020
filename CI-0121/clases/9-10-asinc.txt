@@ -1,0 +1,89 @@
+CAPA DE ENLACE DE DATOS:
+
+
+--------
+VIDEO #1
+--------
+
+
+En el modelo OSI, esta capa se encuentra arriba de la capa física y debajo de la capa de red. En el modelo TCP/IP, se encuentra unida con la capa física. 
+
+Se encarga de transmitir y recibir los paquetes desde y hacia la capa de red, mediante el uso de tramas de datos. Cada una de estas tramas tiene un encabezado, un cuerpo (datos) y un terminador. El cuerpo de la trama es el paquete de datos de la capa de red.
+
+La capa de red envía a esta capa el paquete, el cual es contenido en el cuerpo de la trama y luego se envía por la capa física como bits 0 y 1, en la máquina receptora se reciben estos bits y se forma nuevamente la trama, para posteriormente desencapsular los datos del cuerpo de la trama y enviárselos a la capa de red.
+Esta capa ofrece el servicio de transferencia de datos entre capas de red en dos máquinas distintas. La capa de red envía y recibe los paquetes a través de la capa de enlace de datos.
+
+Los servicios ofrecidos a la capa de red se clasifican en tres:
+	1. Servicio sin conexión ni confirmación de recepción: apropiado para cuando la tasa de error es muy baja. Ej: conexiones ethernet.
+	
+	2. Servicio sin conexión con confirmación de recepción: útil en canales no confiables como en WIFI / inalámbricas.
+	
+	3. Servicio orientado a la conexión con confirmación de recepción: es vital para aplicaciones que necesitan asegurar que las conexiones se den sin errores (sin pérdida) y en el orden correcto, en este tipo, las comunicaciones pasan por tres fases:
+		i. la conexión se establece, inicializando variables y contadores que ayudan a seguir la pista de las tramas que se reciben y las que no.
+		ii. se transmiten una o más tramas de datos.
+		iii. la conexión deberá liberarse, así como todas las variables, búferes y recursos utilizados para mantener la conexión.
+		
+	Estas tres se utilizan para mantener una comunicación fiable.
+	
+Entramado: la capa física se encarga de transmitir bits y también tiene mecanismos para detectar, corregir y evitar errores en la transmisión de esos bits, la capa de enlace de datos debe encargarse de detectar y corregir errores en los flujos de datos nuevamente, pero esta detección se realiza a nivel de estos flujos de datos, determinados por las tramas. A estas tramas se les calcula una suma de verificación y se incluye como parte de la trama de datos enviada. El proceso de entramado se puede realizar en cuatro métodos:
+
+	1. Conteo de bytes:
+		un campo en el encabezado especifica el número de bytes en la trama, con base en esto se obtiene el final de una trama y el inicio de otra. Si hay una falla de transmisión de datos en la capa física, se pierde el dato y afecta a todas las tramas a partir del error.
+	
+	2. Bytes bandera con relleno de bytes:
+		la trama inicia y termina con un byte especial, se define un byte especial denominado FLAG, el cual se coloca al inicio y al final de la trama. Un problema es que dentro de los datos puede venir un byte bandera, afectando el entramado, para solucionarlo se utiliza un byte especial adicional llamado byte de escape, el cual se coloca antes del byte bandera para indicar que este no debe tomarse como delimitador de la trama. Pero esto también genera problemas, por lo que se coloca otro byte de escape antes del byte de escape.
+	
+	3. Bits bander con relleno de bits:
+		en este caso, se agrega unos bits de relleno cuando se encuentra una seguidilla de bits 1 para asegurar una densidad correcta de bits en los datos transmitidos, permite ayudar en la sincronización de la capa física pues muchos bits 1 afecta la forma en que se modulan las señales. En esta técnica, cuando el receptor recibe los datos, los bits de relleno se eliminan (en la otra técnica también) para trabajar con los datos originales. En este caso, cuando hay 5 bits 1 seguidos, se agrega un 0, pero este se borra al recibir el mensaje.
+		
+	
+	4. Violaciones de codificación de la capa física:
+		utilizan un atajo en la capa física, utilizando algunas señales reservadas para indicar el inicio y fin de las tramas. Se llama así porque es una técnica utilizada en la capa de datos y viola el principio de independencia de capas. No hay necesidad de rellenar los datos entonces reduce el ancho de banda consumido. En las transmisiones WIFI y ethernet, se utilizan patrones bien definidos conocidos como preámbulos.
+		
+Tareas de esta capa:
+	I. Control de errores: se garantiza que las tramas se entreguen en el orden adecuado cuando sea necesario y que no se entreguen tramas duplicadas a la capa de red. Para esto se requiere enviar tramas de confirmación entre ambos hosts, indicando cuando se ha recibido una trama para que se envíe la siguiente, esto genera un problema porque puede haber una espera indefinida por una confirmación, por errores de conexión, etc. Como solución se utilizan temporizadores en el emisor, para que cuando estos se venzan se vuelve a enviar la trama para la que no se recibió una confirmación. Pero también puede surgir otro problema relacionado con la duplicación de tramas, por ejemplo, que la confirmación se extravió pero la trama sí se recibió. Para lidiar con esto, se pueden implementar los números de secuencia, por lo que al reenviar una trama, se podría descartar por parte del receptor al observar este número de secuencia y compararlo con los números de secuencia de tramas que ya se han recibido. 
+	
+	II. Control de flujo: esto en casos de que un emisor sea más rápido que un receptor (por ejemplo), que puede generar pérdida de datos porque se descartan tramas, pues algunas no van a poder encolarse cuando se llega al límite. Existen dos mecanismos: control de flujo basado en retroalimentación y otro basado en tasa.
+	
+	
+--------
+VIDEO #2
+--------
+
+
+Detección y correción de errores en la capa de enlace de datos, para esto existen dos estrategias:
+
+	1. Código de correción de errores: se incluye información redundante en las tramas para que el receptor deduzca cuáles debieron ser los datos transmitidos y corregirlos. Se utiliza en medios ruidosos (como WIFI), para que el receptor descubra cuál era el bloque de datos original, además de que una retransmisión tiene la misma probabilidad de ser tan érronea como la transmisión original.
+	
+	2. Códigos de detección de errores: se incluye solo suficiente redundancia en las tramas para que el receptor sepa que ocurrió un error (pero no cuál ni por qué) y solicitar una retransmisión de la trama. Este se utiliza en medios confiables (como la fibra), porque es más económico, y para retransmitir los bloques que salen defectuosos ocasionalmente.
+	
+---> CÓDIGOS DE CORRECIÓN DE ERRORES:
+
+-> palabra codificada: se refiere a una unidad de n bits que contiene bits de datos y bits de verificación (n = m+r).
+
+-> tasa de código: fracción de la palabra que lleva información no redundante (m/n).
+
+-> distancia de hamming: cantidad de bits diferentes entre dos palabras codificadas.
+
+En un código de bloque, los r bits de verificación se calculan únicamente en función de los m bits de datos. En un código sistemático, los m bits de datos se envían directamente junto con los bits de verificación en lugar de codificarlos antes de enviarlos. En un código lineal, los r bits de verificación se calculan como una función lineal de los m bits de datos.
+
+	I. Códigos de Hamming: los bits de la palabra codificada se numeran de forma consecutiva comenzando con el bit de la izquierda. Los bits potencias de 2 son de verificación, el resto se rellenan con los m bits de datos.
+	
+	II. Códigos convolucionales binarios: un codificador procesa una secuencia de bits de entrada y genera una secuencia de bits de salida, aquí no hay un tamaño de mensaje natural (fijo), el codificador tiene memoria, entonces la salida depende de la entrada actual y previa. Se utiliza en redes GSM, satelites y WIFI.
+	
+	III. Códigos de Reed-Solomon: son códigos de bloques lineales que suelen ser sistemáticos. Operan entre símbolos de m bits y para su cálculo se utilizan polinomios lineales. Se utilizan mucho por su corrección de errores en ráfagas.
+	
+	IV. Códigos de verificación de paridad de baja densidad: cada bit de salida se forma a partir de una fracción de los bits de entrada. Son prácticos para tamaños grandes de bloques y tienen buenas habilidades de corrección de errores que superan a otros códigos.
+	
+	
+---> CÓDIGOS DE DETECCIÓN DE ERRORES: 
+
+Es más beneficio, en ocasiones, detectar que hubo un error que añadir información redundante. Se utiliza en canales confiables donde la tasa de errores es baja. Detecta si hubo errores y solicita una retransmisión.
+	
+	I. Paridad: aquí a los datos se les agrega un bit de paridad al final, se elige de manera que el número de bits 1 en una palabra codificada sea par o impar. Puede detectar errores de un solo bit, lo cual eventualmente es un problema ante errores de ráfaga, para lidiar con esto, se trata a cada bloque en una matriz n*k, de manera que un bloque (o fila) tiene un bit de paridad.
+	
+	II. Sumas de verificación (checksum): corresponden a un grupo de bits de verificación asociados a un mensaje, que se colocan al final del mensaje y se calculan como el complemento de la función de suma de los datos (se hace un XOR de dos pares de bits y al resultado se le hace otro XOR con el siguiente par de bits, así sucesivamente, esto se coloca al final del mensaje). El receptor vuelve a calcular el checksum y detectar que no haya errores. El principal problema es que no detecta la eliminiación o adición de ceros.
+	
+	III. Comprobación de redundancia cíclica (CRC / códigos polinomiales): se basan en el tratamiento de cadenas de bits como representaciones de polinomoios con coeficientes de 0 y 1 solamente.
+	EJ: 110001 -> 1x^5 + 1x^4 + 0x^3 + 0x^2 + 0x^1 + 1x^0. Los cálculos se hacen con una operación módulo 2 sobre los datos y no hay acarreos para la suma ni préstamos para la resta. Cuando se usa este método, el emisor y receptor deben acordar un polinomio generador, y los bits de orden mayor y menor del polinomio deben ser 1, para que tenga sentido al hacer los cálculos. La trama debe ser más larga que el polinomio generador.
+	
