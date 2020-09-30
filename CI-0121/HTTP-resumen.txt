@@ -1,0 +1,12 @@
+HTTP es un protocolo de nivel de aplicación para sistemas distribuidos, colaborativos y de información multimedia. Permite un conjunto abiero de métodos y headers que indican el propósito de una consulta. También es utilizado como protocolo genérico para la comunicación entre agentes de usuario (cliente que inicia una solicitud: navegador, etc) y proxies/gateways a otros sistemas de internet.
+
+-> Proxy: programa intermediario que actúa como cliente y servidor con el propósito de realizar consultas a nombre de otros clientes. Con la posible modificación de la consulta así como de la repuesta del servidor.
+
+-> Gateway: servidor que actúa como intermediario para otro servidor, a diferencia del proxy, este recibe consultas como si fuera el servidor original. Es como una capa superior al servidor original. Puede también traducir o modificar el mensaje.
+
+
+OPERACIÓN GENERAL DEL PROTOCOLO HTTP
+
+Es un protocolo de consulta/respuesta, un cliente envía una solicitud a un servidor, el servidor responde con una línea de estado, la versión del protocolo y un código de error/éxito, etc. La forma más simple es que un agente de usuario realiza una consulta para ser aplicada en algún recurso de algún servidor, mediante una conexión simple (agente usuario <-> servidor). Pueden haber intermediarios entre esa conexión (proxy, gateway, tunnel), este último es un punto de relevo entre dos conexiones, ya que el mensaje debe pasar por ahí pero sin modificarlo (como cuando pasa por un firewall).
+Cualquier parte de la comunicación que no actúa como un tunnel puede usar una caché interna para manejar las solicitudes, pues el objetivo es acortar y acelerar el proceso de comunicación pues se posee ya una respuesta en caché que aplica para una solicitud particular.
+La comunicación HTTP tiene lugar sobre conexiones TCP/IP, el puerto por defecto es el 80 pero pueden ser otros también, pero esto no imposibilita a HTTP de ser implementado sobre otroso protocolos en internet o en otras redes. HTTP solo presupone un transporte confiable, cualquier protoclo que garantice eso puede ser usado.
