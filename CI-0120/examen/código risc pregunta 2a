@@ -1,0 +1,8 @@
+	addi	x1, x0, 1000	# contador	
+	addi 	x3, x0, 0	# primera posición de B
+  ETIQ	lw	x4, 0(x3)	# valor en B[x3]
+	addi	x4, x4, -2	# le resta dos
+	sw	x4, 0(x3)	# almacena el valor modificado
+	addi	x3, x3, 4	# posición del siguiente valor de B
+	addi	x1, x1, -1	# resta 1 al contador
+	bnez	x1, ETIQ	# salta si el contador llegó a 0
