@@ -1,0 +1,14 @@
+Daniel:
+ - cliente (menú preguntar si quiere saber cantón o país)
+ - armar la solicitud HTTP según el cantón (?canton=CANTON) o país (?country=CANTON)
+ - enviar la solicitud mediante sockets al servidor (write)
+ - recibir la solicitud mediante sockets del servidor (read)
+	
+Oscar:
+ - hora en csv de paises
+	
+Josue:
+ - terminar el main
+	
+Rodrigo:
+ - diferenciar entre GET y HEAD y ?country= ?canton=
