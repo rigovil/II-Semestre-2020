@@ -1,0 +1,21 @@
+Seguridad: medida de confidencialidad de que la integridad del sistema y de sus datos van a ser preservados.
+Protección: mecanismos que controlan el acceso de procesos y usuarios a los recursos de la computadora.
+
+Se dice que un sistema es seguro si sus recursos son usados y accesados como debería ser en cualquier circunstancia. Violaciones de seguridad pueden ser accidentales o maliciosas. 
+-> intruso, hacker, atacante: los que intentan romper la seguridad.
+-> amenaza (threat): posibilidad de una violación de segruidad.
+-> ataque: un intento de romper la seguridad.
+
+Tipos de violaciones de seguridad accidentales o maliciosas:
+
+	1. Violación de confidencialidad: involucra lecturas no autorizadas de datos. (datos secretos, información de tarjetas,etc).
+	2. Violación de integridad: modificaciones no autorizadas de datos.
+	3. Violación de la disponibilidad: destrucción no autorizada de datos. 
+	4. Robo de servicio: uso no autorizado de recursos. 
+	5. Denegación de servicios: implica prevenir el uso legítimo del sistema. 
+	
+Los atacantes utilizan ciertos métodos estándar para violentar la seguridad de un sistema. El más común es el enmascaramiento donde se pretende ser alguien más en una comunicación, con esto se logra violentar la autenticación y ganar acceso al que normalmente no podrían acceder. Otro método es el ataque de repetición que consiste en la repetición fraudulenta de una transmisión válida de datos (como una transferencia bancaria), se suele hacer junto con la modificación de mensajes, donde se cambian los datos sin que el emisor se dé cuenta. Otra forma es el ataque de persona-en-el-medio, donde el atacante se coloca en mitad de una transmisión de datos. Otro tipo de ataques está dirigida a los privilegios en el sistema, pues usualmente se asignan ciertos privilegios a cada uno de los usuarios y también al sistema. Esto permite darle al atacante privilegios que usualmente no tendría. 
+
+Para proteger un sistema se deben tomar precauciones en cuatro niveles:
+
+	1. 
