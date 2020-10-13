@@ -18,4 +18,79 @@ Los atacantes utilizan ciertos métodos estándar para violentar la seguridad de
 
 Para proteger un sistema se deben tomar precauciones en cuatro niveles:
 
-	1. 
+	1. Físico: los lugares donde esté el sistema deben estar físicamente asegurados para que no entre cualquiera.
+	2. Red: muchos se conectan por internet, redes wifi, etc.
+	3. S.O: deben estar actualizados para disminuir la superficie de ataque, que son los puntos donde un atacante puede entrar y corromper el sistema.
+	4. Aplicación: por el uso de aplicaciones de terceros.
+	
+Phishing: un correo o página web que aparenta ser legítimo conduce al usuario a ingresar información confidencial. 
+
+
+PROGRAM THREATS (AMENAZAS DE PROGRAMAS):
+
+
+	I. Malware: software diseñado para dañar, explotar o deshabilitar una computadora. Programas que se ejecutan en condiciones donde se le proveé ciertos accesos al usuario. Algunos ejemplos:
+		- Troyano: programa que actúa de manera maliciosa en lugar de simplemente hacer su tarea. Otro tipo son los programas que emulan un login para robar las credenciales del usuario.
+		- Spyware: viene en programas que se deciden instalar, puede descargar anuncios, crear pop-ups o captar información del usuario.
+		- Ransomware: encripta alguna o toda la información en una computadora y el usuario debe pagar para desencriptar sus datos y poder utilizarlos nuevamente.
+		- Trap door: el diseñador de un programa deja un agujero en el software que solamente él es capaz de utilizar. Pueden estar en programas o incluso en el compilador (donde son mucho más difíciles de encontrar). Una bunea práctica para evitar es la revisión de código.
+		
+	II. Inyección de código: software que permite que se añada o modifique código ejecutable por malas prácticas al programar. Ejemplo: buffer overflow.
+	
+	III. Virus y gusanos: un virus es un fragmento de código empotrado en un programa legítimo, infectan otros prorgamas, pueden modificar o destruir archivos. Los virus son específicos para algunas arquitecturas, S.O y aplicaciones. Se encuentran en correos o ataques phishing, también cuando se descargan programas desde internet. Los virus se replican por actividad del usuario, mientras que los gusanos utilizan la red para replicarse. Cuando el virus llega a una máquina, un programa llamado virus dropper (troyano usualmente) inserta el virus en el sistema. Categorías:
+		- Archivos: se inserta dentro de un archivo.
+		- Boot: se ejecutan cada vez que el sistema se arranca.
+		- Macro: se escriben en alto nivel, se activan cuando un programa es capaz de ejecutar la macro.
+		- Rootkit: se implantan en sistemas UNIX para tener acceso como root.
+		- Código fuente: buscan otros códigos fuentes para replicarse.
+		- Polimórficos: cambia cada vez que es instalado para que no sean detectados por antivirus. Cambian la firma del virus y no su funcionalidad, la firma es utilizada para identificar un virus.
+		- Encriptados: incluye código descifrado con el virus encriptado.
+		- Sigilo: modifican las partes del sistema que pueden detectar al vrius.
+		- Multipartito: infectan varias partes del sistema (memoria, boot, archivos).
+		- Blindados: hechos para que les sea díficil a los antivirus de rastrear y entender.
+
+
+AMENAZAS DEL SISTEMA Y LA RED:
+
+
+La mayoría de los hackers lanzan ataques desde sistemas zombies, que son sistemas que utilizan para cierto fin sin que el dueño se dé cuenta, lo que hace a los hackers difíciles de rastrear.
+
+	I. Atacar el tráfico de una red: puede enmascararse para fingir ser alguien más (spoofin), o interceptar el tráfico entre un emisor y un receptor.
+	
+	II. Denegación de servicio (DoS): interrumpen el uso normal de un sistema. Son ataques basados en la red. Hay dos categorías, la primera es cuando se utilizan muchos recursos que no se puede hacer casi nada (como descargar algo que utilice todo el CPU). En la segunda categoría están los que interrumpen la red de un servicio, son imposibles de prevenir. Los ataques DDoS son aún más complejos pues se envían ataques desde múltiples sitios a la vez. Muchas veces un sitio no sabe que está bajo ataque, pues la ralentización puede deberse a un ataque u otros motivos.
+	
+	III. Escaneo de puertos: no es un ataque por sí mismo pero permite detectar vulnerabilidades en un sistema. Usualmente es automático e involucra herramientas que intentan crear una conexión TCP/IP o enviar paquetes uDP a un puerto específico o dentor de un rango específico.
+	
+
+CRIPTOGRAFÍA COMO HERRAMIENTA DE SEGURIDAD:
+
+
+La criptografía se utiliza para restringir los posibles emisores o receptores de un mensaje. La critpografía moderna se basa en llaves que se distribuyen de manera selectiva en una red y se usan para procesar mensajes. Permite al receptor de algún mensaje verificar que ese mensaje fue creado por una computadora que posee la misma llave. Las llaves se diseñan de manera que no es computacionalmente factible adivinarlas a partir del mensaje o de otra información. 
+
+	I. Encriptación: se usa para enviar mensajes de manera segura a través de la red, así como para proteger datos, archivos, etc. El emisor se asegura que el receptor va a ser realmente al que le envía el mensaje.
+	
+		- Encriptación simétrica: la misma llave para encriptar se usa para desencriptar. Cifrado de stream: diseñado para encriptar y desencriptar un stream de bytes o bits en lugar de un bloque. 
+		- Encriptación asimétrica: se usan llaves distintas para encriptar y desencriptar.
+		- Autenticación: restringir el conjunto de remitentes de un mensaje. Existen dos variedades de algoritmos de autenticación: funciones hash, el otro es un algoritmo de firma digital. Algunos programadores utilizan firmas en el código para garantizar que no a cambiado desde que se terminó hasta que se instaló en otra compu.
+		- Distribución de llaves.
+		- Criptografía: un ejemplo es TLS, es un protocolo que permite a dos computadoras comunicarse de manera segura.    
+		
+		
+AUTENTICACIÓN DE USUARIO:
+
+	I. Contraseñas: identifican al usuario.
+	II. Vulnerabilidades de las contraseñas: 3 formas de adivinar una contraseña: conociendo información del usuario, fuerza bruta, o ataques diccionario (se prueban todas las posibilidades).
+	III. Asegurando las contraseñas: en UNIX por ejemplo, se usan funciones hash para almacenar las contraseñas pues son fáciles de calcular pero casi imposibles de revertir.
+	IV. One-time passwords: el sistema aleatoriamente escoge una parte de un par de contraseñas, el usuario debe dar la otra parte.
+	V. Biométricos: involucran mediciones biométricas (como la palma de la mano, huella, etc). 
+          
+          
+IMPLEMENTACIÓN DE DEFENSAS DE SEGURIDAD
+
+
+	I. Políticas de seguridad: indica qué debe estar seguro.
+	II. Evaluación de vulnerabilidad: para verificar que las políticas de seguridad están bien implementadas.
+	III. Prevención de intrusiones: detectar intentos fallidos o exitosos de intrusiones en un sistema.
+	IV. Protección contra virus: los antivirus buscan en los programas un patrón específico de instrucciones que crean el virus, si encuentran un patrón lo eliminan.
+	V. Firewalls: es una aplicación, proceso o computadora que se encuentra entre lo confiable y lo no confiable. Los más usuales son los que bloquean conexiones HTTP de sitios no seguros, están los application proxy firewall que son más personalizados al usuario, los XML firewall que analizan el tráfico XML. System-call firewalls que se encuentran entre el kernel y las aplicaciones. 
+	VI. Otras soluciones: existe el ASLR que implementan ciertos S.O que básicamente hace que aleatorizan los espacios de memoria (como el inicio del heap o la pila) para que no sean predecibles y que se evite la inyección de código. 
