@@ -1,0 +1,50 @@
+Protección: controlar el acceso de los procesos y usuarios a los recursos de un sistema.
+
+
+OBJETIVOS DE LA PROTECCIÓN
+
+
+Incrementar la confianza de cualquier sistema que usa recursos compartidos y que se conecta a plataformas de comunicación inseguras, como Internet. Su rol principal es de proveer mecanismos para la aplicación de las políticas que rigen el uso de recursos. Mecanismos: cómo se hace algo. Políticas: qué se puede hacer.
+
+
+PRINCIPIOS DE PROTECCIÓN
+
+
+-> El principio de privilegios mínimos: que a los programas, usuarios y el sistema en general se les den solo los privilegios necesarios para completar sus tareas.
+-> Compartimentación: proceso de proteger cada componente del sistema mediante el uso específico de permisos y restricciones de acceso.
+Un audit trail (pista de auditoría) es un registro en el sistema que rastrea divergencias en los accesos permitidos. 
+
+
+ANILLOS DE PROTECCIÓN
+
+
+Es una separación de privilegios donde se neceista apoyo de hardware. Cuando el sistema arranca, lo hace en el nivel más privilegiado hasta llegar a niveles menos privilegiados. Para regresar a un nivel más privilegiado se pueden utilizar puertas, que son como un portal entre los anillos, usualmente son los syscall. Otra forma es mediante excepciones, donde el control también pasa a un anillo superior y la ejecución ya está predefinida y restringida en un sitio seguro.
+
+
+DOMINIOS DE PROTECCIÓN
+
+
+Un sistema puede ser tratado como un conjunto de procesos y objetos, los objetos puede ser de hardware o software, cada uno tiene un nombre único que lo diferencia del resto y pueden ser accesados a través de operaciones bien definidas. Las operaciones sobre cada uno depende del objeto. Un proceso debería ser capaz de acceder únicamente a los objetos que tiene acceso. Además, un proceso debería ser capaz de acceder solamente a los objetos que necesita para completar su tarea.
+
+	I. Estructura de un dominio: un proceso debería operar dentro de un dominio de protección, donde se especifica los recursos a los que pudiera acceder. La asociación entre un proceso y un dominio puede ser estática o dinámica. Un dominio puede ser realizado de varias formas:
+		- cada usuario puede ser un dominio.
+		- cada proceso puede ser un dominio.
+		- cada procedimiento puede ser un dominio.
+		
+	II. Ejemplo en UNIX: se utiliza un setuid bit asociado a cada archivo, que puede estar habilitado o no. Si el bit está activo, el que acceda al archivo asume la identidad del dueño del archivo. Si se crea un archivo con root como dueño y el setuid habilitado, cualquiera que accesa al archivo pasa a ser root mientras el proceso esté activo (si es un ejecutable).
+	
+	
+MATRIZ DE ACCESO
+
+
+Las filas representan los dominios y las columnas los objetos, cada celda consiste en un conjunto de permisos.
+
+
+IMPLEMENTACIÓN DE LA MATRIZ DE ACCESO
+
+
+	I. Tabla global: la tabla consiste en un conjunto ordenado de tripletas <dominio, objeto, permisos>, se busca la tripleta y si no se encuentra se manda una excepción. El problema es que es muy grande y no puede almacenarse en memoria.
+	
+	II. Listas de acceso para objetos: cada columna puede implementarse como una lista de acceso para cada objeto, se pueden descartar las entradas vacías.
+	
+	III. Listas de capacidades para los dominios: se asocia cada fila con su dominio. Una lista de capacidades es una lista de objetos junto con las operaciones permitidas para cada uno. Cada objeto se representa con su nombre físico o dirección.
