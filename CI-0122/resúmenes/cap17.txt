@@ -45,6 +45,22 @@ IMPLEMENTACIÓN DE LA MATRIZ DE ACCESO
 
 	I. Tabla global: la tabla consiste en un conjunto ordenado de tripletas <dominio, objeto, permisos>, se busca la tripleta y si no se encuentra se manda una excepción. El problema es que es muy grande y no puede almacenarse en memoria.
 	
-	II. Listas de acceso para objetos: cada columna puede implementarse como una lista de acceso para cada objeto, se pueden descartar las entradas vacías.
+	II. Listas de acceso para objetos: cada columna puede implementarse como una lista de acceso para cada objeto, se pueden descartar las entradas vacías. El usuario crea el objeto y especifica cuáles dominios tienen acceso a ese objeto.
 	
 	III. Listas de capacidades para los dominios: se asocia cada fila con su dominio. Una lista de capacidades es una lista de objetos junto con las operaciones permitidas para cada uno. Cada objeto se representa con su nombre físico o dirección.
+	
+	IV. Mecanismo Lock-key: cada objeto tiene una lista única de patrones de bits conocidas como locks. Cada dominio tiene una lista única de patronces de bits llamadas keys, un proceso ejecutando en un dominio puede acceder a un objeto solo si ese dominio tiene la key que empareja a uno de los locks del objeto.
+	
+
+REVOCAR PERMISOS DE ACCESO (p.683)
+
+
+CONTROL DE ACCESO BASADO EN ROLES
+
+
+La misma idea de que a un archivo o directorio se le asigna un dueño, grupo, usuarios, etc. Los privilegios se asignan a los procesos, limitándolo a aquellos que necesita para su tarea. Entonces los privilegios y programas también pueden ser asignados a roles, en este sentido, un usuario puede tener un rol que le permite ciertos privilegios y entonces poder correr un programa que los necesite.
+
+
+-> Sandboxing: involucra correr procesos en ambiente que limitan lo que pueden hacer. Es la práctica de hacer cumplir limitaciones estrictas en un proceso.
+
+-> Code signing: es la firma digital de los programas y de los ejecutables para confirmar que no han cambiado desde que el autor los creó. Algunos S.O se niegan a correr programar que fallan el chequeo de code-signing.
