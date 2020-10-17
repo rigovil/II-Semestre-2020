@@ -1,0 +1,17 @@
+COHERENCIA DE CACHÉ
+
+Se habla de esto cuando hay procesos (hilos) que comparten algún espacio de memoria. 
+-> Memoria centralizada: una distribución donde el bus que conecta los procesadores, sus cachés, etc. desemboca en un acceso a memoria principal. Se habla de multiprocesamiento simétrico o UMA (acceso a memoria uniforme), porque todos los procesadores están en las mismas condiciones para utilizar este bus, cuando hay hilos ejecutando de un mismo proceso, en la memoria principal hay un segmento de memoria compartida para esos hilos.
+-> Memoria distribuida: cada procesador tiene su propia memoria principal, útil cuando hay muchos procesadores, cuando hay hilos ejecutando de un mismo proceso, en cada memoria de esos procesadores hay una parte de la memoria compartida, hay acceso remoto cuando un procesador necesita parte de la memoria compartida pero no se encuentra en su memoria, sino en la de otro procesador, eso es muy caro.
+
+Existen también híbridos, es decir que dentro de los procesadores hayan varios núcleos y que esos núcleos compartan memoria en la memoria designada para ese procesador.
+
+Consistencia: si un dato se modifica, es qué tan rápido es accesible a los otros hilos.
+
+Coherencia cuando se tiene memoria centralizada: los protocolos utilizados en este caso son snooping, significa que cada controlado de caché, cuando necesita algo para que la coherencia se dé, manda un mensaje por el bus. Traer un bloque de una caché de otro procesador puede ser más lento que ir directamente a memoria.
+Cuando se tiene memoria distribuida: los protocolos de coherencia se basan en directorios, se sabe cuáles bloques de la memoria compartida tienen las cachés, entonces en lugar de hacer un broadcast por el bus, se envía un mensaje al procesador que tiene el bloque en cuestión.
+
+Snoopy Cache:
+El controlador de caché "olfatea" todas las transacciones del medio compartido (bus), por lo que si un procesador va a pedir algo a memoria, pero una caché posee el bloque actualizado, entonces se aborta el acceso a memoria y se le envía desde la otra caché, porque el mensaje de solicitar un bloque x a memoria también le llega a los demás. Cuando se va a modificar un bloque, primero se envía un mensaje para indicar que se va a cambiar y se espera a que todos los demás invaliden ese bloque debido al cambio. Un autómata de estado finito se encarga del estado de un bloque de la caché (si está compartido, mod, inválido).
+
+** ver posibles estados del autómata video 10 min 36:20 **
