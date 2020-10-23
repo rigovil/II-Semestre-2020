@@ -87,3 +87,20 @@ Es más beneficio, en ocasiones, detectar que hubo un error que añadir informac
 	III. Comprobación de redundancia cíclica (CRC / códigos polinomiales): se basan en el tratamiento de cadenas de bits como representaciones de polinomoios con coeficientes de 0 y 1 solamente.
 	EJ: 110001 -> 1x^5 + 1x^4 + 0x^3 + 0x^2 + 0x^1 + 1x^0. Los cálculos se hacen con una operación módulo 2 sobre los datos y no hay acarreos para la suma ni préstamos para la resta. Cuando se usa este método, el emisor y receptor deben acordar un polinomio generador, y los bits de orden mayor y menor del polinomio deben ser 1, para que tenga sentido al hacer los cálculos. La trama debe ser más larga que el polinomio generador.
 	
+
+Protocolos elementales de enlace de datos:
+	Controlan la transmisión de tramas entre dos distintos hosts. La comunicación a nivel de enlace de datos se da a nivel local. 
+	
+Parte de la capa de enlace de datos se ejecutan en hardware especializado para ello donde se controla la transmisión de datos a través de la capa física, conocido como NIC (tarjeta de red). La otra parte se ejecuta mediante software controlador (driver).
+
+Existen dos tipos de tramas en el caso de ETHERNET (varían el encabezado):
+	-> ethernet II
+	-> IEEE802.3
+	
+	I. Protocolos de ventana deslizante: el emisor mantiene una ventana emisora, que es un conjunto de números de secuencia que corresponde a las tramas que tiene permitido enviar y el receptor igual pero con las tramas que tiene permitido aceptar. Estos números cambian conforme se envían las tramas. Hay varios tipos de ventanas deslizantes:
+	
+		i. ventana deslizante de un bit: el tamaño de la ventana permite enviar y recibir 1 trama a la vez. El problema es cuando ambos lados envían una trama inicial al mismo tiempo pues no se permiten más tramas, por lo que se podría perder el orden. Presentan mayor problema en canales con un amplio retardo de propagación.
+		
+		ii. ventana deslizante con retroceso N: se busca enviar una cantidad de tramas tal que cuando se comiencen a recibir las confirmaciones, se aproveche al máximo el ancho de banda del enlace, por eso es importante definir el tamaño de la ventana. Una forma de hacerlo mediante el producto de ancho de banda-retardo, ancho de banda (bits/seg) * tiempo de tránsito por sentido = tamaño de ventana (BD). Se obtiene cuántas tramas caben dentro del canal mientras se propagan del emisor al receptor. Para hacer la recepción de confirmaciones, se debe usar el 2*BD + 1, pues se necesita que al menos una trama se envíe por completo, este es el número de tramas que pueden quedar pendientes si el emisor envía tramas de manera continua. Cuando hay errores, el receptor descarta todas las tramas subsecuentes sin enviar confirmaciones de recepción para las tramas, de esta forma la ventana del emisor se llena y se empezará a vaciar, para retransmitir las tramas desde la que se descartó, esta técnica ocupa bastante ancho de banda si la tasa de errores es alta. Otra técnica es la repetición selectiva, en la cual la trama dañada se descarta pero las tramas en buen estado subsecuentes se almacenan en un búfer, cuando expira el temporizador del emisor, se retransmite la última trama sin confirmación.
+		
+	II. Protocolo punto a punto (PPP): se utiliza en comunicaciones seriales, por ejemplo en routers. Los enlaces SONET y los enlaces ADSL aplican PPP pero en formas distintas. Antes de transportar las tramas en líneas SONET, hay que establecer y configurar el enlace PPP, una máquina finita de estados contiene todos los posibles flujos que se pueden dar a través de líneas SONET (fibra óptica). El formato de la trama es: comienzan con un byte bandera del estándar DHLC, luego sigue el campo de dirección (1111111) para que todas las estaciones deban aceptar la trama, luego está el campo de control cuyo valor es (00000011), luego el campo protocolo indica a qué protocolo de capa de red se deben de entregar las tramas, luego están los datos, la suma de verificación y una bandera que indica la finalización.   
