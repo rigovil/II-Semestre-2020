@@ -1,0 +1,35 @@
+[Tarea propuesta: 2020/Oct/05;  para entregar: 2020/Oct/23]
+
+   Modalidad de trabajo: mismos grupos que PIRO, si no está en PIRO individual
+
+   Programas de usuario
+      Directorio de trabajo: "userprog"
+      Directorio con programas de usuario: "test"
+      Manera de correr programas de usuario: ./nachos -x ../test/halt
+
+A) Llamados al sistema (system calls) en NachOS (algunos)
+
+   1) Revisar el llamado al sistema "Halt" que hace un shutdown de la simulación
+      a) Revisar la clase "BitMap" en el archivo "bitmap.h" y "bitmap.cc"
+
+   2) Completar las siguientes llamados al sistema NachOS definidos en "syscall.h" e implantados en "exception.cc"
+
+      a) Relacionados con archivos: Open, Read, Write, Close, Create
+         i) Requieren la definición de una tabla de archivos abiertos, esta tabla es compartida por todos los hilos, si un hilo abre un archivo aparece abierto en todos los demás
+         ii) La apertura de archivos inserta una entrada en la tabla, todas las lecturas y escrituras deben comprobar que el archivo haya sido debidamente abierto
+         iii) "Create" crea el archivo, pero no lo deja abierto
+         iv) "Close" comprueba que el archivo esté abierto, lo cierra o lanza un error
+
+      b) Relacionados con sicronización:
+         i) Semáforos: SemCreate, SemDestroy, SemSignal, SemWait
+         ii) Locks: LckCreate, LckDestroy, LckLock, LckUnlock
+         iii) Condition: CondCreate, CondDestroy, CondWait, CondSignal, CondBroadcast
+
+      c) Relacionados con sockets:
+         i) Socket, Connect, Listen, Bind, Accept, Shutdown
+
+   3) Hacer que los siguientes programas de usuario corran correctamente
+      a) "copy": copia el archivo "nachos.1" a "nachos.2", puede correr "cp nachos nachos.1" para que la prueba se haga con un archivo real
+      b) "socket.c": se conecta al servidor "os.ecci.ucr.ac.cr" y despliega la página principal
+      c) Construir ejemplos para comprobar los elementos de sincronización
+
