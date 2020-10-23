@@ -13,3 +13,6 @@
 [submodule "CI-0123/ci0123_proyecto_piro"]
 	path = CI-0123/ci0123_proyecto_piro
 	url = https://git.ucr.ac.cr/JOSUE.SEQUEIRA/ci0123_proyecto_piro
+[submodule "CI-0123/--force"]
+	path = CI-0123/--force
+	url = https://git.ucr.ac.cr/JOSUE.SEQUEIRA/ci0123_proyecto_piro
