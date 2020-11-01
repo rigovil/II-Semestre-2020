@@ -1,0 +1,3 @@
+Se habla de coherencia de caché cuando hay procesamiento multihilo. Se quiere trabajar con hilos cuando se requiere que compartan memoria.
+
+** seguir en minuto 18:52 **
