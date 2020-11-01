@@ -1,0 +1,9 @@
+ARQUI:
+	- ver clase del jueves 8 octubre (semana 9)
+	- ver vídeo 12 y clase del jueves 15 octubre (semana 10)
+	
+OPER:
+	- ver material de clases	
+	
+REDES:
+	- ver vídeos de capa 4
