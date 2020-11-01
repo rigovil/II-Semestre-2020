@@ -1,0 +1,196 @@
+-------
+VIDEO 1
+-------
+
+
+La capa de red de llevar todos los paquetes que se originan en una red origen hasta un destino, este destino puede estar en una red distinta a la de origen. Para llegar a ese destino puede que se necesiten muchos saltos entre distintos enrutadores intermedios. La capa de red debe conocer la topología de la red para saber dónde enviar los paquetes que se generan.
+
+Los componentes principales de la red son: el equipo de proveedor de servicio de internet (enrutadores), el equipo de los clientes
+
+-> Servicios proporcionados a la capa de transporte
+Deben cumplir los siguientes objetivos: los servicios deben ser independientes de la tecnología del enrutador; la capa de transporte debe estar aislada de la cantidad, tipo y tecnología de los enrutadores; las direcciones de red disponibles por la capa de transporte deben usar una numeración uniforme. (Estos objetivos permiten la interoperabilidad). Los servicios son:
+	
+	- Servicio sin conexión: los paqeuetes se transmiten por separado en la red y se enrutan de forma independiente. Aquí los paquetes se conocen como datagramas y la red como red de datagramas.
+	
+	- Servicio orientado a la conexión: se establece una ruta del enrutador de origen al enrutador destino antes de enviar cualquier paquete (establecimiento de la conexión). Esa conexión se conoce como circuito virtual (VC) y la red es una red de circuitos virtuales.
+	
+Enrutamiento en una red de datagramas (sin conexión): un proceso p1 en un host h1 entrega el mensaje a la capa de transporte y le indica que lo envíe al proceso p2 en el host2, el código de la capa de transporte se ejecuta en h1 (en el S.O), el código agrega un encabezado de transporte (encapsulamiento) y entrega el resultado a la capa de red. Si el mensaje fuera n veces más grande que el tamaño de un paquete, la capa de red lo debe dividir en al menos n paquetes. La capa de red enviará cada paquete por turnos al enrutador más cercano, mediante un protocolo punto a punto entre los enrutadores, cada enrutador tiene una tabla que indica a dónde debe enviar paquetes para cada uno de los posibles destinos. De esta manera los paquetes saltan entre distintos enrutadores hasta llegar al destino, en el cual se realiza un desencapsulamiento para pasar la carga útil de los paquetes a cada capa del modelo de referencia.
+	-> el algoritmo que maneja las tablas y toma decisiones de enrutamiento se conoce como algoritmo de enrutamiento.
+	-> IP constituye la base de internet, cada paquete transporta una dirección IP de destino que los enrutadores usan para reenviarlos por separado (no garantizan que lleguen todos ni tampoco en el orden requerido). Se dice que el protocolo IP es no orientado a la conexión. Los paquetes IPv4 son de 32 bits y IPv6 de 128 bits.
+	
+Enrutamiento en un servicio orientado a la conexión: requiere de una red de circuitos virtuales, que evitan la necesidad de elegir una nueva ruta para cada paquete enviado, cuando se establece la conexión se elige una ruta de la máquina de origen a la máquina destino y esa ruta se guarda en las tablas de los enrutadores. Esa ruta se utiliza para todo el tráfico que fluya a través de esa conexión (similar al sistema telefónico). Cuando se libera la conexión, se termina el circuito virtual. Cada paquete lleva un identificador que indica a cuál circuito virtual pertenece. Esto garantiza la entrega de paquetes en un orden establecido y que todos los paquetes se entreguen.
+En algunos contextos, a las redes de circuitos virtuales se les conoce como conmutación mediante etiquetas (MPLS), se utilizan dentro de las redes de los proveedores de servicios en internet, donde los paquetes IP se envuelven en un encabezado MPLS que tiene un identificador de conexió o etiqueta de 20 bits. Es útil cuando la calidad del servicio es importante.
+
+REDES DATAGRAMAS VS REDES CIRCUITOS DIGITALES:
+
+1. El uso de circuitos virtuales requiere una configuración que necesita de tiempo y recursos, pero una vez hecho esto la comunicación es más sencilla. En una red de datagrama no requiere configuración pero la comunicación es más difícil por el proceso de localizar el destino.
+
+2. Las direcciones de destino en redes de datagramas son más grandes o largas que los números en los circuitos virtuales generándole a estos últimos un ahorro en el tamaño de los paquetes. Aunque paquetes muy cortos presentan un desperdicio de banda ancha. 
+
+3. La cantidad de espacio de tabla requerido en el enrutador es más amplia en redes de datagrama pues se necesita una entrada para cada destino, mientras que en circuitos virtuales solo se necesita una entrada para cada circuito virtuales y además se eliminan cuando se libera el uso de ese circuito.
+
+4. En sistemas de procesamiento de transacciones, la sobrecarga requerida para establecer y liberar un circuito virtual puede ocupar más tiempo que el uso real del circuito. En contextos donde el tiempo de ejecución sea extenso, son útiles los circuitos virtuales permanentes (se establecen de forma manual y duran meses o años).
+
+5. Los circuitos virtuales son vulnerables, porque si un enrutador falla y pierde su memoria, todos los circuitos virtuales se deben abortar y volverse a establecer una conexión.
+
+
+-------
+VIDEO 2
+-------
+
+
+La principal función de la capa de red es enrutar paquetes de un origen a un destino, para ello se utilizan algoritmos de enrutamiento, que es la parte software de la capa de red que decide por cuál línea de salida se transmite un paquete entrante. Un enrutador tiene dos procesos internos:
+	- proceso de reenvío: maneja cada paquete que llega y busca en las tablas de enrutamiento la línea de salida por la cual se envía el paquete.
+	- proceso de enrutamiento: llena y actualiza las tablas de enrutamiento, mediante el uso de los algoritmos.
+	
+Los algoritmos pueden ser no adaptativos, no basan sus decisiones de enrutamiento en mediciones o estimaciones del tráfico y topología, sino que se calcula por adelantado y se descarga en los enrutadores al arrancar la red (enrutamiento estático). También pueden ser adaptativos, cambian sus decisiones para reflejar los cambios en tráfico y topología (enrutamiento dinámico).
+
+-> Principio de optimización: se busca la ruta óptima. El grupo de rutas óptimas de todos los orígenes a un destino dado, forman un árbol con raíz en el destino (árbol sumidero o divergente). El objetivo de los algoritmos es descubrir y usar los árboles sumideros para todos los enrutadores, pues esos árboles no son necesariamente únicos.
+
+ALGORITMOS:
+
+1. Algoritmo de la ruta más corta:
+	La idea es construir un grafo de la red, cada nodo es un enrutador y cada arco representa una línea o enlace de comunicaciones. Para elegir una ruta entre un par de enrutadores, se elige la ruta más corta entre ellos en el grafo. Hay varias maneras para elegir la ruta más corta:
+	- según número de saltos (cantidad de nodos por los que pasa)
+	- según la distancia en km.
+	- según el retardo promedio de un paquete de prueba estándar.
+Algoritmo de Dijkstra es uno para encontrar la ruta más corta.
+
+2. Inundación:
+	Cada paquete entrante se envía a todas las líneas de salida excepto por la línea por donde llegó. Desventajas: genera paquetes duplicados, problemas de congestión. Se puede utilizar un contador de saltos por paquetes, de manera que si llega a 0 se descarta, aún así pueden haber muchos paquetes duplicados. Ventajas: se asegura que un paquete se entregue a todos los nodos de la red, es robusta y requiere poca configuración, los enrutadores solo necesitan conocer a sus vecinos.
+	
+3. Enrutamiento por vector de distancia (dinámico):
+	Opera haciendo que cada enrutador mantenga una tabla que proporcione la mejor distancia conocida a cada destino, y el enlace que se usa para llegar ahí. Para actualizar las tablas se intercambia información de los costos con los vecinos. Presenta un problema conocido como conteo infinito, relacionado con la convergencia del algoritmo, la convergencia se entiende como el proceso de establecer enrutamiento con base en las mejores rutas, un algoritmo converge cuando se calculan todas las mejores rutas hacia los destinos. En este algoritmo, este proceso puede llegar a hacerse con lentitud. Un cambio mínimo en la topología puede llevar a este problema (por ejemplo que un enrutador deje de funcionar).
+	
+4. Enrutamiento por estado del enlace (dinámico): los algoritmos IS-IS y OSPF representan los algoritmos más utilizados dentro de las redes WAN y de internet en la actualidad. Pasos de este algoritmo: 
+	- averiguar a sus vecinos y conocer sus direcciones de red (se envía un paquete especial en cada línea punto a punto, y se espera que se regrese una respuesta).
+	- establecer una métrica de distancia o costo para cada uno de sus vecinos. Este costo se establece de forma manual o automática.
+	- construir un paquete que incluya toda la información anterior.
+	- enviar este paquete a los demás enrutadores y recibir paquetes de estos enrutadores. El paquete consiste en un ID del emisor, un número de secuencia, una edad y lista de vecinos (con costo para llegar a cada uno de los vecinos).
+	- calcular la ruta más corta a todos los demás enrutadores.
+Para distribuir estos paquetes de estado de enlace, se recurre a la inundación y para evitar los problemas asociados a la inundación, cada paquete lleva un número de secuencia que se incrementa con cada nuevo paquete enviado. Los enrutadores llevan registro de todos los pares <enrutador de origen, secuencia> que han visto, si llega un nuevo paquete se compara con los paquetes ya vistos, se reenvía a todas las líneas de salida (excepto por la que llegó) y si es duplicado, se descarta. Cuando un enrutador ha recibido todos los paquetes de estado de enlace, construye un grafo de la red, cada enlace se representa dos veces (una por dirección) pues direcciones distinas pueden implicar un costo distinto.
+
+5. Enrutamiento jerárquico:
+	Los enrutadores se dividen en regiones, cada enrutador conoce los detalles para enrutar paquetes a destinos dentro de su región, pero desconoce de la estructura interna de otras regiones. Reduce el tamaño de las tablas de enrutamiento. Hay un incremento en la longitud de la ruta.
+	
+6. Enrutamiento por difusión o multidestino:
+	Cada paquete contiene una lista de destinos que indica los destinos deseados, cuando un paquete llega a un enrutador, este revisa todos los destinos para determinar el conjunto de lineas de salida que necesitará. El enrutador genera una nueva copia del paquete para cada línea de salida e incluye en cada paquete solo aquellos destinos que va a utilizar la línea. 
+	
+7. Enrutamiento multidifusión:
+	Se utiliza cuando se quiere enviar un mensaje a un grupo de dispositivos. Los esquemas de enrutamiento se basan en los de enrutamiento por difusión. Para que los mensajes lleguen solamente a miembros del grupo, se cortan ciertas ramas del árbol de expansión.
+	
+8. Enrutamiento anycast:
+	Un paquete se entrega al miembro más cercano de un grupo. Se utilizan cuando se necesita recibir la información correcta sin importar el nodo con el que se haya hecho contacto lo más rápido posible. Se utiliza en transmisiones masivas o servicios DNS.
+	
+9. Enrutamiento para hosts móviles:
+	Para enrutar un paquete, la red debe encontrar al host primero pues se debe saber dónde está en un momento determinado. El host móvil debe indicar su posición actual a un host que se encuentre cerca en la ubicación base, a este host se le denomina agente de base (home agent), cuando se sepa la ubicación del host móvil, los paquetes se envían a través del agente base el cual conoce la ubicación del host móvil.
+	
+10. Enrutamiento en redes ad-hoc:
+	Las redes ad-hoc son redes de nodos que están cerca entre sí. La topología puede cambiar todo el tiempo. Las rutas se pueden descubrir bajo demanda (es decir, cuando se solicitan). Dos nodos se conectan si se pueden comunicar de manera directa mediante sus radios de comunicación, cada nodo difunde un msj de manera periódica y se espera que sus vecinos respondan a ese msj, si no entonces el nodo sabe que ese vecino ya no está a su alcance pues se movió o que falló.
+	
+
+-------
+VIDEO 3
+-------
+
+
+La capa de red se encarga de controlar la congestión utilizando algoritmos para la congestión, también se encargan la capa de transporte y de enlace.
+Congestión: ocurre cuando hay muchos paquetes presentes en una red, presentándose retardo o pérdida de los paquetes. La manera más efectiva de reducir la congestión es reducir la carga que la capa de transporte coloca en la capa de red, para evitar un colapso por congestión: cuando el desempeño se desploma a medida que aumenta la carga ofrecida más alla de la capacidad de la red.
+
+-> Control de congestión: asegurar que la red sea capaz de transportar el tráfico ofrecido.
+
+-> Control de flujo: tráfico entre un emisor y un receptor particular, se encarga de que un emisor rápido no transmita datos a una tasa de transmisión mayor de la que es capaz de recibir el receptor.
+
+Métodos para controlar la congestión:
+	1. Aumentar los recursos de la red (enlaces de comunicación o ampliando la capacidad de los enlaces).
+	2. Reduciendo carga de la red.
+	
+-> Aprovisionamiento: los enlaces y enrutadores que se usan mucho, que se actualicen apenas puedan.
+
+-> Enrutamiento consiente del tráfico: las rutas se ajustan a los patrones de tráfico que cambian durante el día. El objetivo es desviar los puntos más activos que serán los primeros en congestionarse. La manera más directa de lograrlo es establecer la ponderación de enlaces de manera que sea una función del ancho de banda del enlace y el retardo de propagación más la carga medida. Tiene problemas pues conduce a un enrutamiento errático.
+
+-> Control de admisión: reducir la carga. La idea es que no se debe establecer un circuito virtual a menos que la red pueda transportar el tráfico adicional sin congestionarse. Con las descripciones del tráfico, la red decide si admite o no el nuevo circuito virtual. Así, la red puede reservar suficiente capacidad a lo largo de las rutas de cada uno de los circuitos virtuales, de manera que no hay congestión. Esta reserva tiene que hacerse en todos los enrutadores que participan en el circuito virtual.
+
+-> Regulación de tráfico: regula la cantidad de datos que se transmiten en la red. Evasión de congestión: se solicita a los emisores que reduzcan las transmisiones y su velocidad si la congestión es inminente. Para hacer esa solicitud se puede:
+	1. usar paquetes reguladores, el enrutador selecciona un paquete congestionado y envía un paquete regulador de regreso al host de origen, notificándole que la red está congestionada.
+	2. notificación explícita de la congestión (ECN), un enrutador etiqueta un paquete que reenvíe con un bit en el encabezado para notificar la congestión.
+Contrapresión salto por salto: el paquete regulador ejerce el efecto en cada enrutador que pase. Así se puede cortar la congestión sin que se pierdan paquetes, pero es costoso.
+
+-> Desprendimiento de carga (peor de los casos): si todo lo demás fallan, la red descarta los paquetes que no se pueden entregar. Las aplicaciones deben marcas sus paquetes para indicar qué tan importantes son, los enrutadores entonces eliminan los paquetes menos importantes. También se puede recurrir a la detección temprana aleatoria (RED), donde el enrutador cuando detecta una congestión, descarta de manera aleatoria los paquetes, para que el emisor pueda tomar acciones antes de que empeore la situación. En una red de datagramas, hacer esto es buena estrategia porque el enrutador no sabe la fuente que está causando más problemas, el emisor notará la pérdida (pues no hay confirmación) y el protocolo de transporte disminuirá la velocidad de transmisión.
+
+
+-------
+VIDEO 4
+-------
+
+
+La calidad de servicio es la habilidad de proveer diferentes prioridades a diferentes aplicaciones, usuarios, etc. o de garantizar un cierto nivel de rendimiento para un flujo de datos. 
+Para garantizar que los flujos se entreguen sin problemas, es recurrir al exceso de aprovisionamiento, donde se construye una red con la suficiente capacidad para soportar cualquier tráfico. Ej: el sistema telefónico. Esto tiene un costo muy elevado y habría que cambiar la red si hay nuevos requerimentos. Los mecanismos de calidad de servicio permiten que una red con menos capacidad cumpla con los requerimientos de la aplicación con la misma eficiencia pero a un menor costo. Para asegurar la calidad de servicio se necesitan consideran cuatro aspectos:
+	- lo que las aplicaciones necesitan de la red.
+	- cómo regular el tráfico que entra en la red.
+	- cómo reservar recursos en los enrutadores para garantizar el desempeño.
+	- si la red puede aceptar o no más tráfico en forma segura (aceptar solo el tráfico que podemos transportar en la red). 
+	
+Hay dos versiones de calidad de servicio para Internet:
+1. servicios integrados
+2. servicios diferenciados
+
+-> Flujo de información: conjunto de paquetes que van de un origen a un destino. En una red orientada a la conexión, un flujo podría estar constituido por todos los paquetes de una conexión. En una red sin conexión, un flujo serían los paquetes enviados de un proceso a otro sin importa la ruta hasta llegar al destino.
+Parámetros que determinan la calidad de servicio:
+1. ancho de banda.
+2. retardo de propagación (qué tanto se retrasa la entrega de información).
+3. variación del retardo. (jitter)
+4. pérdida (en qué propoción se pierden paquetes).
+
+Para admitir varias aplicaciones, las redes pueden soportar distintas categorías de calidad de servicio. Las redes ATM tienen soporte para:
+	1- tasa de bits constantes (para telefonía)
+	2- tasa de bits variable en tiempo real (videoconferencias)
+	3- tasa de bits variables no en tiempo real (ver una película)
+	4- tasa de bits disponible (transferencia de archivos)
+	
+Modelado de tráfico: técnica que regula la tasa promedio y ráfagas de un flujo de datos que entra a la red. Permite que las aplicaciones transmitan a una amplia variedad de tráfico que se adapte a sus necesidades y tener una manera simple de describir los patrones de tráfico en la red. 
+Al establecer un flujo, el usuario y la red se ponen deacuerdo sobre cierto patrón de tráfico para ese flujo, a esto se le llama acuerdo a nivel de servicio (SLA). 
+
+Supervisión de tráfico: monitoreo de un flujo de tráfico. 
+
+Para llevar a cabo del modelado del tráfico se puede recurrir a dos técnicas: cubeta con goteo y cubeta con token.
+
+Programación de paquetes: los algoritmos que que asignan recursos de enrutadores entre los paquetes de un flujo y entre los flujos competidores. Se pueden reservar tres tipos distintos de recursos para diversos flujos: ancho de banda (determina cuántos flujos pueden ir por una línea), búffers (absorben pequeñas ráfagas de tráfico a medida que los flujos compiten entre sí), ciclos de CPU (un enrutador solo puede procesar cierta cantidad de paquetes por segundo).
+Una manera de programación de paquetes es el algoritmo FIFO/FCFS: cada enrutador coloca los paquetes en una cola de búffer en cada línea de salida hasta que se puedan enviar en el mismo orden en que llegaron, su desventaja es que un emisor puede acaparar la mayor parte de la capacidad de los enrutadores.
+Otra manera es el algoritmo de encolamiento justo: los enrutadores tienen colas separadas, una por cada flujo para una línea  de salida dada, cuando la línea se vuelve inactiva, el enrutador explora de manera circular las colas, entonces toma el primer paquete de la siguiente cola. Un problema es que proporciona más ancho de banda a los hosts que utilizan paquetes grandes. También está el algoritmo de encolamiento ponderado, donde los paquetes se envían según su prioridad, pero una ráfaga de paquetes de alta prioridad puede privar a los de baja prioridad.
+Los paquetes pueden incluir una etiqueta de tiempo, que registra qué tan atrasado o adelantado está el paquete según la programación, los paquetes lentos se agilizan y se reduce la velocidad de los paquetes rápidos, la red entrega todos los paquetes con un retardo más consistente.
+
+Control de admisión: se ofrecen flujos de información con sus requerimientos, entonces la red acepta o rechaza el flujo con base en su capacidad. Si aepta, reserva la capacidad por adelantado en los enrutadores para garantizar la calidad de servicio, además la reserva de capacidad se debe hacer a lo largo de toda la ruta. 
+Enrutamiento con calidad de servicio: se considera la capacidad de la red para garantizar los requerimientos de los distintos flujos.
+
+Dos tipos de calidad de servicio:
+1. Servicios integrados: corresponden a una arquitectura diseñada para el envío de multimedia de flujos continuos. El protocolo de reservación de recursos (RSVP) brinda la posibilidad de que varios emisores transmitan a varios grupos de receptores, permite que receptores individuales cambien de canal libremente, optimiza el ancho de banda y elimina la congestión.
+
+2. Servicios diferenciados: se aplica la calidad de servicio basada en clase, posibilita que se pueda implementar ampliamente de manera local en cada enrutador sin una configuración avanzada y sin que toda la ruta esté involucrada (útil en enrutamiento de datagramas). El administrador de la red define un conjunto de clases de servicios con sus reglas de envío y estas reglas se configuran en los enrutadores. Una variante de la calidad de servicio basado en clase es el reenvío expedito, donde hay dos clases: regular y expedito, la mayor parte del tráfico o paquetes son regulares y muy pocos son expeditos, donde estos tienen la capacidad de transitar por la red como si no hubieran otros paquetes, por lo que hay poca pérdida, bajo retardo y poca variación de retardo. Otra variante es el reenvió asegurado, se especifican cuatro clases de prioridades, cada uno con sus propios recursos, las primeras tres clases son: oro, plata y bronce y se definen tres probabilidades de descarte para paquetes en congestión. Un clasificador marca los paquetes y un supervisor se encarga de colocar los paquetes marcados en uno de los tres posibles búffers de salida, si se llenan, los paquetes se descartan.
+
+
+-------
+VIDEO 5
+-------
+
+
+Maneras de interconectar redes:
+
+	1. Construir dispositivos que traduzcan o conviertas los paquetes de cada red en paquetes para otra red (difícil y costoso).
+	2. Tratar de resolver el problema al agregar una capa de indirección y construir una capa común encima de las distintas redes (posible y barato).
+	
+El protocolo IP proporciona un formato de paquete universal que todos los enrutadores reconocen y que se puede pasar por casi cualquier red.
+En un switch o conmutador, toda la trama se transporta con base en dirección MAC, los switches no deben entender el protocolo de capa de red pero los enrutadores sí, en estos se extrae de la trama el paquete de datos y la dirección del paquete se utiliza para decidir a dónde enviarlo. Un enrutador que puede manejar múltiples protocolos de red se denomina enrutador multiprotocolo.
+Tunelización: permite encapsular paquetes de IPv6 dentro de paquetes IPv4. Se utiliza para conectar hosts y redes aisladas mediante el uso de otras redes, la red resultante se denomina red superpuesta.
+
+Enrutamiento entre redes: dentro de cada red, los algoritmos de enrutamiento se denominan protocolos intra-dominio o puerta de enlace interior. Fuera de esa red se utiliza un protocolo inter-dominio o puerta de enlace exterior. Todas las redes pueden usar idstintos protocolos intra-dominio pero deben usar el mismo protocolo inter-dominio. En internet el protocolo de enrutamiento inter-dominio se denomina BGP, como cada red opera de manera independiente a las demás, se conocen como AS (sistema autónomo). 
+
+Cuando se transmite información hacia otras redes lejanas, es posible que los paquetes se transmitan a través de redes cuya unidad máxima de transporte cambie, por lo que se necesita que los paquetes se dividan en fragmentos, cada red o enlace impone un tamaño máximo a sus paquetes y estos límites se puede deber a distintas razones:
+	- hardware (ej, tamaño de trama ethernet).
+	- S.O (ej, buffers con tamaño delimitado).
+	- protocolos (ej, cantidad de bits en el campo de longitud de paquete).
+	- cumplimiento de algún estándar internacional.
+	- deseo de reducir hasta ciero nivel las retransmisiones inducidas por errores.
+	- deseo de eivtar que un paquete ocupe el canal demasiado tiempo.
+	
+Como cada red define el tamaño máximo de los paquetes, es necesario  que se conozca esto para dividr el paquetes en los fragmentos del tamaño adecuado.  Además, dado que una fuente no conoce la ruta que tomará un paquete a través de la red hacia un destino, no se sabe qué tan pequeños deben ser los paquetes, para ellos se recurre al MTU de la ruta (unidad de transmisión máxima de la ruta), donde cada paquete IP se envía con sus bits de encabezado establecidos para indicar que no se puede realizar ningún tipo de fragmentación, si un enrutador recibe un paquete más grande, genera un paquete de error de vuelta, lo regresa a la fuenta y descarta el paquete, de manera que el emisor vuelva a fragmentar el paquete. De esta forma los enrutadores trabajan menos.
