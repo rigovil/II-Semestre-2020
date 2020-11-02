@@ -1,3 +1,10 @@
 Se habla de coherencia de caché cuando hay procesamiento multihilo. Se quiere trabajar con hilos cuando se requiere que compartan memoria.
 
-** seguir en minuto 18:52 **
+En memoria centralizada, cuando una caché necesita un bloque, envía un mensaje por el bus que llega a los otros controladores de caché y a la memoria, debe indicar si es para lectura o escritura. Si ningún controlador responde, el que responde con el bloque es el siguiente nivel de memoria (memoria principal en el peor de los casos). Si el que responde es otro controlador porque tiene ese bloque modificado, entonces se lo envía a la caché que lo solicita y lo manda a cambiar al siguiente nivel de memoria (tanto si la petición es de lectura o de escritura), lo que cambia es que esa caché que envía deja el bloque como COMPARTIDO si la petición es para lectura y lo deja INVÁLIDO si la petición es para escritura.
+Si hay un bloque compartido por dos cachés (por ejemplo) y uno quiere modificarla, lo que se hace es enviar un mensaje para que todas las cachés que tengan el bloque lo invaliden, y una vez hecho eso, la caché que va a modificar puede modificarlo.
+En el ejemplo anterior, si ambas cachés quieren modificar el bloque y está compartido, el que gane el bus primero va a modificarlo e invalidarlo en el otro, y entonces la caché donde se invalidó el bloque pasa a tener un fallo de escritura y se procede como siempre.
+
+** seguir viendo 1:06:40 **
+
+DUDAS:
+	Min 1:01:10 dice que hay race condition, si el procesador hace todo ese juego de coherencia entonces por qué se produce un race condition en ocasiones?
