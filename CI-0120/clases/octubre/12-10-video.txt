@@ -1,0 +1,15 @@
+PRIMITIVAS DE SINCRONIZACIÓN
+
+Candado: para que solamente un hilo esté en una sección crítica.
+En coherencia de caché y en memoria centralizada, solo una caché puede tener acceso al bus, el que lo pida primero es el que tiene acceso y los demás deben esperar.
+En el bajo nivel, hay instrucciones en ensamblador que permiten hacer una sincronización (lr y sc). El lr (load reserved) guarda la dirección de donde se está trayendo un dato a memoria en un registro especial (RL) para que esa dirección sea la de un candado. EJ: lr x2, x5 -> la dirección que está en x5 se guarda en RL. Como es un load, solo una caché puede tener acceso al bus y las demás se esperan. El RL es parte del contexto de un hilo. El sc (store conditional) es un store condicional que pregunta si la dirección que está en RL coincide con la dirección a donde se va a guardar un dato, si sí coincide entonces hace el store. El lr y sc se ejecutan de manera atómica, es decir que entre el lr y el sc no pasó nada en medio que haga dudar de que lo que se leyó (en lr) haya cambiado. Cuando ocurre un modificación de un bloque por parte de una caché y otra lo debe invalidar, el controlador de caché que invalida el bloque compara si la dirección en RL coincide con una palabra del bloque que está invalidando, si sí coincide entonces se cambia ese RL por un -1, de manera que se avisa a un sc de ese hilo que ya no se haría de manera atómica. Si el sc se encuentra que la dirección a la que va almacenar no coincide con el RL, entonces guarda un 0 en el registro donde estaba el dato que iba a almacenarse. 
+Ej: 	
+	ETIQ	lr	x2, x9
+			...
+			...
+		sc	x1, 0(x9)
+		beq	x1, x0, ETIQ
+		
+en x9 hay un -1 y en el RL hay un 56, se almacena un 0 en x1, el salto se ejecuta para que vuelva a intentar hacer la operación de manera atómica.
+Lo que estaría después del beq son las operaciones críticas, lo que está entre lr y sc es el candado.
+Otra forma en la que un sc no se ejecute porque el RL es -1 es cuando se le acaba el quantum a un hilo y está ejecutando instrucciones entre el lr y sc, entonces se guarda su contexto y cuando le vuelve a tocar el uso de la CPU, el contexto se vuelve a cargar y el RL siempre se trae como -1 por más que en el contexto guardado no haya estado así.

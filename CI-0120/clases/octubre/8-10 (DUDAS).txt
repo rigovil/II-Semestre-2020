@@ -4,7 +4,11 @@ En memoria centralizada, cuando una caché necesita un bloque, envía un mensaje
 Si hay un bloque compartido por dos cachés (por ejemplo) y uno quiere modificarla, lo que se hace es enviar un mensaje para que todas las cachés que tengan el bloque lo invaliden, y una vez hecho eso, la caché que va a modificar puede modificarlo.
 En el ejemplo anterior, si ambas cachés quieren modificar el bloque y está compartido, el que gane el bus primero va a modificarlo e invalidarlo en el otro, y entonces la caché donde se invalidó el bloque pasa a tener un fallo de escritura y se procede como siempre.
 
-** seguir viendo 1:06:40 **
+consistencia: en cuánto tiempo tengo disponible un bloque que una caché necesita.
+
+Si una caché quiere modificar un bloque que otras cachés lo tienen compartido, el bloque se sube de memoria y se invalida en el resto.
+
+Una caché que tenga un bloque compartido no puede enviarlo a una caché que lo solicita, debe hacerse desde otro nivel de memoria o si el bloque lo tiene modificado.
 
 DUDAS:
 	Min 1:01:10 dice que hay race condition, si el procesador hace todo ese juego de coherencia entonces por qué se produce un race condition en ocasiones?
