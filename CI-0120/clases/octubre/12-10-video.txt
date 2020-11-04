@@ -13,3 +13,5 @@ Ej:
 en x9 hay un -1 y en el RL hay un 56, se almacena un 0 en x1, el salto se ejecuta para que vuelva a intentar hacer la operación de manera atómica.
 Lo que estaría después del beq son las operaciones críticas, lo que está entre lr y sc es el candado.
 Otra forma en la que un sc no se ejecute porque el RL es -1 es cuando se le acaba el quantum a un hilo y está ejecutando instrucciones entre el lr y sc, entonces se guarda su contexto y cuando le vuelve a tocar el uso de la CPU, el contexto se vuelve a cargar y el RL siempre se trae como -1 por más que en el contexto guardado no haya estado así.
+
+Esta forma de sincronización hace que los hilos esperen de forma activa.
