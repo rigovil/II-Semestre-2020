@@ -1,0 +1,9 @@
+proyecto:
+
+- dos hilos, uno para el procesador y otro para el buffer victima, el buffer victima tarda 24 ciclos copiando un bloque a memoria, debe usar el mismo reloj que en el procesador.
+
+- si a una caché se le acaba el quantum y tiene un fallo de caché, el fallo se resuelve y después entra otro hilo. Cuando se acaba el quantum signifca que no se hace fetch de ningún otra instrucción.
+
+DUDAS:
+
+si se necesita un bloque del buffer victima y este lo está escribiendo a memoria, igual lo puede pedir? 

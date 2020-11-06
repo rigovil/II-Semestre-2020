@@ -1,3 +1,5 @@
 En RISC-V cuando una operación no es atómica, el sc no cambia el registro donde se encuentra el dato, si sí es atómica entonces pone un 0 en ese registro, es diferente que en el caso anterior con MIPS.
 
-** minuto 39:20 **
+PROYECTO:
+
+Buffer víctima: como el procesador es de un solo núcleo, la única forma en la que un bloque de caché modificado se tenga que escribir a memoria es porque vaya a ser reemplazado por otro, en ese caso, en lugar de escribirlo a memoria y gastar ciclos, se le manda al buffer víctima y este se encarga de escribirlo a memoria. El buffer víctima se maneja en paralelo al procesador.
