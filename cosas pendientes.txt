@@ -1,9 +1,18 @@
 ARQUI:
-	- ver clase del jueves 8 octubre (semana 9)
-	- ver vídeo 12 y clase del jueves 15 octubre (semana 10)
+	- clase jueves 5 noviembre
+	- videos de semana 14
+	- trabajar en el proyecto (entrega jueves 19 noviembre)
 	
 OPER:
 	- ver material de clases	
 	
 REDES:
 	- ver vídeos de capa 4
+	- ver útlimo vídeo de capa 5 y direccionamiento
+	- investigación (entrega jueves 12 noviembre)
+	- tarea corta 2 (entrega jueves 12 noviembre)
+	- ver vídeos de capa 6 y quiz
+	
+ASISTENCIAS:
+	- II tarea programada, trabajos en clase (progra)
+	- revisión de lab 13 en adelanta (principios)
