@@ -1,0 +1,43 @@
+CAPA DE TRANSPORTE
+
+-------
+VIDEO 1
+-------
+
+Servicios que ofrece a las capas superiores:
+
+Su objetivo es el de proporcionar un servicio de transmisión de datos eficiente, confiable y económico a los procesos de la capa de aplicación. Entidad de transporte es el hardware o software de esta capa que se encarga del trabajo. 
+Servicios:
+	- orientado a la conexión: las conexiones tienen tres fases: establecimiento, transferencia de datos y la liberación.
+	- sin conexión: es útil cuando en la capa de red se hace uso de un servicio sin conexión, de lo contrario no tiene sentido porque sería ineficiente. 
+	
+La comunicación en esta capa se hace de extremo a extremo, comunicando los datos de la capa de aplicación en segmentos. Un ejemplo son los sockets, que se implementan a partir de esta capa, las aplicaciones de más alto nivel hacen uso de los sockets para comunicarse con hosts remotos. 
+Primitivas del servicio de transporte:
+	- listen
+	- connect
+	- send
+	- receive
+	- disconnect
+	
+Los datos recibidos desde la capa de aplicación pasan por un encapsulamiento en el origen y un desencapsulamiento en el destino, la capa de transporte le agrega encabezados al segmento (mensajes que se envían de una entidad de transporte a otra).
+
+En servicios orientados a la conexión, la última fase de la comunicación es la desconexión, la cual puede darse de dos formas:
+	- desconexión asimétrica: cualquiera de los dos usuarios de transporte puede emitir esta primitiva, con lo que se envía un segmento DISCONNECT a la entidad de transporte remota y se libera la conexión.
+	- desconexión simétrica: cada dirección se cierra por separado. La conexión se libera cuando ambas partes emiten la primitiva DISCONNECT.
+	
+
+-------
+VIDEO 2
+-------
+
+La comunicación en esta capa se da de extremo a extremo, pues el enrutamiento de paquetes se da en la capa de red, en el host destino ocurre que el contenido del paquete pasa a la capa de transporte. El trabajo en esta capa se da en el host de origen y de destino, por eso es de extremo a extremo. Los protocolos de transporte son similares a los de la capa de enlace de datos, pues hacen un control de errores, secuenciación y de realizar un control eficiente del flujo.
+
+En la capa enlace de datos, dos enrutadores se comunican de forma directa mediante un canal físico (cableado o inalámbrico), pero en la capa de transporte, ese canal físico se sustituye por la red completa, todos los datos transmitidos tienen que transitar por toda la red (o varias redes) para llegar al destino.
+
+Direccionamiento: cuando un proceso de aplicación quiere establecer conexión con un proceso remoto, se debe especificar a cuál. Lo que se hace es definir direcciones de transporte en los que los procesos escuchan las solicitudes de conexión, estos puntos terminales son los puertos. Por lo que hay dos tipos de direccionamiento o forma de identificar a los hosts:
+	- puertos (punto de acceso al servicio de tranpsorte TSAP)
+	- direcciones de red (punto de acceso al servicio de red NSAP)
+
+Rol de la capa de transporte: 
+	- establecimiento de la conexión: es complejo, se debe considerar la congestión (pérdida de paquetes eventualmente).
+segmento duplicado con retardo: un proceso envía un mensaje dos veces.
