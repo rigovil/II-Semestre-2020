@@ -9,8 +9,6 @@ OPER:
 REDES:
 	- ver vídeos de capa 4
 	- ver útlimo vídeo de capa 5 y direccionamiento
-	- investigación (entrega jueves 12 noviembre)
-	- tarea corta 2 (entrega jueves 12 noviembre)
 	- ver vídeos de capa 6 y quiz
 	
 ASISTENCIAS:
