@@ -40,4 +40,60 @@ Direccionamiento: cuando un proceso de aplicación quiere establecer conexión c
 
 Rol de la capa de transporte: 
 	- establecimiento de la conexión: es complejo, se debe considerar la congestión (pérdida de paquetes eventualmente).
-segmento duplicado con retardo: un proceso envía un mensaje dos veces.
+segmento duplicado con retardo: un proceso envía un mensaje dos veces, problemas cuando hay un servicio orientado a la conexión. Alternativas cuando se pierden datos:
+		1. restringir el tiempo de vida de un paquete: diseño de una red restringida, colocar un contador de saltos en el paquete, marcar el tiempo en cada paquete. La idea es que el origen etiquete los segmentos con números de secuencia, así el destino puede descartar duplicados. Usar un reloj en los hosts, no necesitan estar sincronizados, cada reloj tiene un contador binario que se incrementa, se requiere que la cantidad de bits del contador debe ser >= que los bits del números de secuencia, pues los relojes continúan operando aunque el equipo falle. La tasa máxima de datos se determina por las características del reloj, pues se envía a lo sumo un segmento por puslo de reloj, así, la entidad de transporte debe esperar a que el reloj emita un puslo antes de abrir una conexión después de un reinicio por falla. Acuerdo de tres vías: protocolo que implica que un igual verifique con el otro que la solicitud de conexión es verídica, este acuerdo se usa en el protocolo TCP. Cuando hay conexiones con tasas de transferencia muy altas, se utiliza la protección PAWS (protección contra el reinicio de números de secuencia): que es que se utiliza una marca de tiempo, en una conexión, para exteneder el número de secuencia.
+	
+	- liberación de una conexión: liberación asimétrica (como una llamada telefónica, cualquiera puede colgar) o simétrica (dos conexiones unidireccionales distintas, se liberan por separado).
+	
+	- control de errores: diferencias en cuanto a función y grado.
+		1. en función, asociada a la detección de los errores: la suma de verificación de la capa de transporte protege a un segmento mientras atraviesa una trayectoria de red completa.
+		2. en grado, asociada a la retransmisión y protocolo de ventana deslizante: los enlaces inalámbricos pueden tener varios segmentos transitando a la vez (a diferencia de la capa de enlace que solo uno).
+Para un control de errores, en esta capa lo que se hace es el almacenamiento en buffer, se pueden usar varios tipos de buffer: de tamaño idéntico o variable al segmento, otra es un buffer circular grande por conexión y no depende del tamaño de los segmentos.
+También puede utilizarse el protocolo de ventana deslizante, se necesita un mecanismo que limite las transmisiones del emisor con base en la capacidad de transporte de la red, se necesita definir la capacidad de la red en segmentos/seg y el tiempo de ida en vuelta.
+Multiplexión: puede ser necesario aún cuando ya se hayan manejado los errores, si hay una sola dirección de red, todas las conexiones de transporte tienen que usarla. Cuando un segmento lelga, se necesita de un mecanimos que sepa a cuál proceso asignarlo. La multiplexión también es útil en esta capa por otra razón, mediante la multiplexión inversa: permite agilizar las transmisiones al balancear el envío de datos entre las múltiples salidas de un host (EJ: el protocolo SCTP, control de transmisión de flujo).
+
+
+-------
+VIDEO 3
+-------
+
+
+Control de la congestión: responsabilidad de la capa de enlace de datos y de red, en conjunto con la capa de transporte. El problema se da cuandos los hosts generan información a una tasa superior a la que una red pueda superar, colapsando la red. Por eso, la asignación de ancho de banda debe asignarse para evitar la congestión y darle una buena asignación de ancho de banda a las entidades de transporte que utilizan la red.
+Eficiencia y potencia: se obtiene mejor desempeño de la red si se asigna ancho de banda hasta el punto en que el retardo empieza a aumentar con rapidez, este punto está por debajo de la capacidad. La potencia está dada por: carga/retardo.
+Equidad máxima mínima: cuando los enrutadores tienen conexiones que compiten por el mismo ancho de banda, el mecanismo de congestión será quien asigne el ancho de banda a las conexiones, la forma de equidad deseada es la máxima mínima. Una asignación es así si el ancho de banda otorgado a un flujo no se puede aumentar sin disminuir el asignado a otro flujo. 
+Convergencia: el algoritmo de control de congestión debe converger rápidamente hacia una asignación equitativa y eficiente del ancho de banda, en una red siempre entran y salen conexiones, por lo que el ancho de banda necesario para una conexión también debe variar con el tiempo.
+Regulación de la taza de envío: para obtener una asignación de ancho de banda deseable, para esto se puede limitar la tasa de envío mediante dos factores: realizando un control de flujo si el receptor es de baja capacidad, la otra forma es cuando se da una congestión en la red. Protocolos de control de congestión (XCP, TCP con ECN, FAST TCP, Compound TCP, CUBIC TCP, TCP). Cuando es necesario regular la tasa de envío utilizando conjeturas por la falta de información, los emisores deben reducir sus tasas de alguna forma, la forma en que lo hacen es mediante una ley de control, por ejemplo AIMD (incremento aditivo/decremento multiplicativo) que es apropiada para llegar a un punto de operación eficiente y equitativo, TCP utiliza esta ley de control.
+
+
+-------
+VIDEO 4
+-------
+
+
+Internet tiene dos protocolos principales en la capa de transporte, uno sin conexión (UDP, user datagram) y otro orientado a la conexión (TCP, transport control).
+
+PROTOCOLO UDP
+transmite segmentos con un encabezado de 8 bytes y la carga útil. Los puertos se usan para identificar los puntos terminales dentro del origen y el destino, cuando llega un paquete UDP, su carga útil se entrega al proceso que está conectado al puerto destino. Los puertos tienen una longitud de 16 bits (0-65535). 
+UDP no realiza control de flujo, ni control de congestión ni retransmisiones cuando se recibe un segmento erróneo, más bien los procesos se encargan de eso. Además proporciona una interfaz para el protocolo IP donde se demultiplexa varios procesos mediante el uso de puertos y la detección de errores extremo a extremo opcional. 
+Una funcionalidad de UDP es RPC (llamado a procedimiento remoto), donde se busca permitir que los programas invoquen procedimientos de un host remoto de una manera ágil y sencilla. Cuando un proceso en un host1 llama a otro procedimiento en host2, el proceso invocado en host1 se suspende y el proceso se lleva a acabo en host2.
+Como se puede llegar a perder la solicitud y la respuesta, el cliente debe mantener un temporizador para retransmitir la solicitud si es necesario. En este caso, una estrategia consiste en utilizar una respuesta como confirmación de recepción explícita de una solicitud, por lo que no es necesario confirmar la recepción de la solicitud por separado.
+Otra funcionalidad es en el protocolo RTP (transporte en tiempo real), su función es multiplexar varios flujos de datos en tiempo real en un solo flujo de paquetes UDP. Aquí, a cada paquete enviado en un flujo RTP se le da un número más grande que a su predecesor, permitiendo al destino saber si falta un paquete, aquí la aplicación decide cómo proceder. Se utiliza ampliamente para aplicaciones multimedia (ej: radio en internet, telefonía en internet, videoconferencias).
+También está el protocolo RTCP (control de transporte en tiempo real), se encarga de la retroalimentación, sincronización e interfaz de usuario, pero no transporta muestras de medios. Maneja la sincronización entre flujos.  
+Al trabajar con contenido multimedia, está el jitter: variación en el retardo que ocurre cuando los paquetes se envían con los intervalos correctos y exactos entre ellos desde el emisor, pero llegan al receptor con tiempos relativos. Una solución es colocar los paquetes en un buffer en el receptor antes de reproducirlos, para reducir significativamente el jitter. La reproducción sufre una interrupción cuando no hay datos para reproducir la siguiente secuencia.
+
+
+PROTOCOLO TCP
+se diseño para proporcionar un flujo de bytes confiable de extremo a extremo, a través de una red no confiable. Cada máquina que soporta TCP tiene una entidad de transporte TCP que acepta flujos de datos de usuario de procesos locales, los divide en fragmentos que no excedan 64 KB y envía cada pieza como un datagrama IP independiente.
+Se crean puntos terminales (sockets) tanto en el servidor como en el receptor, cada uno tiene un ID constituida por la dirección IP y el puerto. Algunos puertos:
+	- 20, 21 -> FTP
+	- 22 -> SSH
+	- 25 -> SMTP (correo)
+	- 80 -> HTTP
+	- 443 -> HTTPS
+Puertos del 0 al 1024 son asignados a servicios específicos.
+En TCP, todas las conexiones son full duplex (ambas direcciones) y de punto a punto. No soporta multidifusión y difusión (UDP para broadcast). Una conexión TCP es un flujo de bytes, no un flujo de mensajes. Mensajes con alta prioridad pueden usar la bandera URGENT en el encabezado y hace que TCP transmita todo lo que tenga para esa conexión. 
+Cada byte tiene su propio número de secuencia de 32 bits, las entidades receptoras y emisoras intercambian datos en segmentos: encabezado de 20 bytes, seguido de los datos (0 bytes de datos para confirmación de recepción). 
+Se hace uso de la unidad máxima de transferencia (MTU) para determinar el tamaño de los segmentos. Primero, cada segmento y su encabezado TCP debe caber en la carga útil de 65515 bytes del protocolo IP. Segundo, cada enlace tiene una MTU y segmento debe caber ahí en el emisor y receptor sin fragmentación. El protocolo básico que utilizan las entidades TCP es el protocolo de ventana deslizante con un tamaño de ventana dinámico. 
+En TCP, un proceso está escuchando en un puerto y al recibir un segmento TCP entrante, puede aceptar o rechazar la conexión, si la acepta devuelve un segmento de confirmación de recepción. La vulnerabilidad que aquí se presenta se llama inundación SYN y se debe a que el proceso que escucha debe recordar el número de secuencia tan pronto como responda con su propio segmento SYN, esto significa que un emisor puede ocupar los recursos en un host si envía un flujo continuo de segmentos SYN y nunca les da seguimiento para completar la conexión, dejando pendiente la confirmación. El host puede saturarse y colapsar. 
+Liberación de la conexión: se libera de manera independiente de su igual (simétrica), cualquiera de las partes envía un segmento TCP con el bit FIN establecido, al confirmar la recepción, se apaga ese sentido para que no se transmitan nuevos datos, aún así los datos pueden seguir fluyendo de manera indefinida en el otro sentido, al apagarse ambos sentidos, se libera completamente la conexión.
+Control de congesitón TCP: se mantiene una ventaja de congestión cuyo tamaño es el número de bytes que puede tener el emisor en la red en cualquier momento, todos los algoritmos TCP suponen que los paquetes perdidos se deben a la congestión, por lo que monitorean los temporizadores en busca de problemas, para ello se implementa un reloj de confirmación de recepción ya que las confirmaciones regresan al emisor a la misma tasa (aprox) a la que se pueden enviar los paquetes, por lo que es posible sincronizar el emisor con esa tasa para controlar la congestión. En otras palabras la tasa se cambia al del enlace lento. 
