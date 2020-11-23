@@ -1,0 +1,8 @@
+Fórmula de Amdahl
+
+Sirve para calcular la aceleración de un programa. 
+Usualmente la aceleración se calcula: tiempoViejo / tiempoNuevo.
+
+Fórmula: 1 / (1-ftm + (ftm/ac. caract))
+ftm = fracción del tiempo a mejorar, parte del tiempo de programa que es mejorable debido a paralelización.
+aceleración de la característica usualmente es el número de núcleos.

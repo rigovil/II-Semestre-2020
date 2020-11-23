@@ -1,0 +1,14 @@
+Confiabilidad
+
+significa qué tan confiable es un sistema, para medirlo se mide el tiempo de servicio continuo, o tiempo para fallo. Se debe suponer que el tiempo que tarda funcionando el sistema o una unidad del sistema, es exponencial.
+
+MTTF: tiempo promedio para fallar.
+FIT: fallos por unidad de tiempo, tasa de fallos. 1/MTTF = FIT.
+MTTR: tiempo promedio para reparar una unidad o sistema.
+MTBF: tiempo promedio entre fallos. MTTR+MTTF = MTBF.
+
+Coeficiente de disponibilidad de una unidad = MTTF/MTBF
+
+Por ejemplo, si hay un sistema con 5 computadoras y si una se descompone el sistema deja de funcionar. El MTTF de cada computadora es de 100 días. El FIT de cada computadora es 1/100. Entonces el FIT del sistema es 5*1/100 = 1/20 y el MTTF del sistema es 1/FITsistema = 20 días.
+
+Propiedad de la no memoria: no importa cuánto tiempo lleve manejando una unidad de un sistema, a partir del momento en el que se observa esa unidad es como si estuviera comenzando a funcionar.
