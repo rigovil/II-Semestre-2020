@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include "Socket.h"
 
-
 int main( int argc, char ** argv ) {
 
    Socket s(true);
-   char buffer[ 512 ];
+   char buffer[512];
 
    s.Connect( "127.0.0.1", 9866 ); 
    s.Write( argv[1] );	

@@ -1,0 +1,40 @@
+[Ejercicio propuesto: 2020/Nov/10, entrega 2020/Nov/17]
+
+Objetivo
+   Completar la clase "Socket" para lograr el intercambio de mensajes utilizando UDP
+
+Procedimiento
+
+1) Funcionamiento UDP
+   - Completar la clase "Socket" para poder intercambiar mensajes UDP
+      - Se facilita la interfaz "Socket.h"
+      - Programar los métodos: "sendTo" y "recvFrom", de manera que los procesos puedan intercambiar
+        mensajes utilizando UDP
+      - Deben lograr que los mensajes puedan ser enviados a direcciones de broadcast también
+         - Cada grupo tendrá una subred designada, en el rango 172.16.123.0/24, con máscara 28, siguiendo
+           la siguiente tabla:
+
+    Grupo	   Red		 Router 1  Router 2  Usables  BCast
+   Profes 	172.16.123.00/28   01	     02       03-14     15
+   Grupo 1	172.16.123.16/28   17	     18       19-30     31
+   Grupo 2	172.16.123.32/28   33        34       35-46     47
+   Grupo 3	172.16.123.48/28   49        50       51-62     63
+   Grupo 4	172.16.123.64/28   65        66       67-78     79
+   Grupo 5	172.16.123.80/28   81        82       83-94     95
+   Grupo 6	172.16.123.96/28   97        98       99-110    111
+   Grupo 7	172.16.123.112/28  113       114      115-126   127
+   Grupo 8	172.16.123.128/28  129       130      131-142   143
+
+
+2) Ejemplo TCP para servidor intermedio
+   - Se facilita un ejemplo para comprender el funcionamiento de un servidor intermedio en el esquema de
+     conexión del proyecto programado.  El ejemplo no está ligado a la clase Socket desarrollada en las
+     clases, tarea que los estudiantes deben realizar para presentar en su proyecto.
+   - Archivos facilitados:
+      serv-tcp.c
+      cli-tcp.c
+      int-tcp.c
+
+Referencias
+   https://os.ecci.ucr.ac.cr/ci1320/material/sockets-course.2006.ppt
+   Protocolo definido para intercambio de mensajes entre servidores
