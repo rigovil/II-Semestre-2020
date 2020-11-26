@@ -1,0 +1,137 @@
+-------
+VIDEO 1
+-------
+
+En contextos donde hay un solo canal de transmisión y múltiples usuarios y hosts deben haber protocolos que controlen el envío de datos en estos contextos, y estos protocolos se encuentran en una subcapa de la capa de enlace de datos denominada subcapa MAC la cual se ubica después de la capa física.
+
+Formas de asignar el canal a un dispositivos:
+
+1. Asignación estática: se pueden usar técnica de multiplexión (por frecuencias o división de tiempo). Al asignar de manera estática se genera un desperdicio de ancho de banda pues no siempre los dispositivos tienen que transmisitr datos.
+
+2. Asignación dinámica: los dispositivos pueden acceder por igual al canal de transmisión y que lo hagan cuando lo necesitan. Se deben considerar ciertas cosas: tráfico independiente, n cantidad de usuarios con un programa distinto; canal único, hay un solo canal disponible para todas las comunicaciones; colisiones observables, dos tramas se traslapan en el tiempo si se transmiten de forma simultánea y la señal resultante se altera (colisión); tiempo continuo o ranurado; detección de portadora o sin detección, no se intenta utilizar el canal si se detecta que está ocupado.
+
+Protocolos de acceso múltiple:
+
+1. Protocolo ALOHA: cada terminal de usuario compartía la misma frecuencia ascendente para enviar las tramas a la central. Después de que una estación envíe su trama a la central, esta difunde de nuevo a todas las estaciones, y se puede utilizar como un tipo de confirmación. Este protocolo se implementó en dos formas: puro y ranurado.
+
+	I. Puro: la idea era que los usuarios transmitieran cuando hubieran datos por enviar, pero podría ocasionar colisión, por lo que se optó por que un emisor esperara un tiemp aleatorio para enviar una trama nuevamente, en caso de una nueva colisión, el emisor espera nuevamente un tiempo aleatorio.
+	
+	II. Ranurado: duplica la capacidad del aloha puro. Se divide el tiempo en intervalos discretos (ranuras), cada intervalo le corresponde a una trama. Es necesario que se definan límites de las ranuras en los usuarios, para ellos se utiliza una estación que emita una señal de sincronización al comienzo de cada intervalo.
+
+
+2. Protocolos de acceso múltiple con detección de portadora: las estaciones escuchan una portadora (transmisión) y actúan de manera acorde.
+
+	I. CSMA Persistente-1: cuando una estación tiene datos por enviar, primero escucha para ver si hay alguien más transmitiendo, si está inactivo, al estación envía sus datos, si está ocupado, la estación espera hasta que se desocupe para transmitir una trama. Si hay una colisión, la estación espera un tiempo al azar y vuelve a ejecutar el proceso. 
+	
+	II. CSMA Persistente-p: cuando una estación está lista para enviar datos, escucha el canal, si está inactivo, la estación transmite con una probabilidad p y con una probabilidad q = 1-p se posterga hasta la siguiente ranura, si esa ranura también está inactiva, transmite o se posterga una vez más con probabilidades p y q nuevamente. Cuando hay una colisión, se espera un tiempo aleatorio. Si el canal está ocupado, se espera a la siguiente ranura.
+	
+	III. CSMA No persistente: una estación escucha el canal cuando quiere enviar una trama, si nadie maś está transmitiendo entonces comienza a transmitir. Si el canal está en uso, la estación no escucha de manera continua esperando a que se desocupe, sino que espera un tiempo aleatorio y repite el algoritmo. Conduce a un mejor uso del canal pero produce mayores retardos que persistente-1.
+	
+	IV. CSMA con detección de colisiones: es la base de la LAN Ethernet, el hardware de la estación debe escuchar el canal mientras transmite, si la señal que recibe es distinta de la señal que está enviando, se sabe que hay una colisión, por lo que espera un tiempo aleatorio.
+	
+	
+3. Protocolos libres de colisiones (protocolos de reservación):
+
+	I. Protocolo de mapa de bits: cada periodo de contención consiste en n ranuras. Una estación k anuncia que tiene una trama por enviar, insertando un bit en la ranura k y cuando pasen las n ranuras, cada estación sabe cuáles otras quieren transmitir, por lo que las transmisiones se hacen en orden numérico. La eficiencia del canal es d/(d + n); n = sobrecarga por trama, d = cantidad de datos en bits.
+	
+	II. Paso de token: se pasa un mensaje conocido como token de una estación a otra, en un mismo orden predefinido, este mensaje representa el permiso para enviar. Si una estación tiene una trama por enviar, la transmite cuando recibe el token. Además, puede transmitir esa trama antes de pasarle el token a otra estación, si no hay tramas por enviar entonces la estación le pasa el token a otra estación. La topología es la de un anillo.
+	
+	III. Conteo descendente binario: una estación que necesita utilizar el canal difunde su dirección, a todos los bits en la dirección de las estaciones se les aplica un OR booleano cuando se transmita al mismo tiempo, por lo que estaciones con mayor numeración tienen más prioridad. Eficiencia: d/(d + log2N).
+	
+
+4. Protocolos de contención limitada: usan contención cuando la carga es baja, logrando un retardo bajo y técnicas libres de colisiones cuando la carga es alta, con esto logra una buena eficiencia. 
+
+	I. Protocolo de recorrido de árbol adaptable.
+	
+
+5. Protocolos de LAN inalámbrica: no se puede verificar si un canal está ocupado o no, tampoco se pueden detectar colisiones en el momento. Ej: A ---> B <--- C 
+Acá, A transmite a B pero no sabe que C está transmitiendo a B también.
+
+Se recurre a otros protocolos como MACA (acceso múltiple con prevención de colisiones). El emisor estimula al receptor para que envié una trama corta, de manera que las estaciones cercanas detecten esa transmisión y eviten ellas transmitir durante la siguiente trama de datos o ranura. Se usa esto en lugar de la detección de portadora. A la trama de estímulo se le llama RTS y a la trama que indica que es posible transmitir se le llama CTS.
+	
+	
+-------
+VIDEO 2
+-------
+
+Ethernet: que múltiples dispositivos en una LAN puedan acceder a la red.
+Ethernet clásica: resuelve el problema de acceso múltiple mediante las técnicas ya mencionadas.
+Ethernet conmutada: dispositivos llamados swithces/conmutadores para interconectar distintos dispositivos, operando a 100, 1000 y 10000 Mbps.
+
+Clásica: un solo cable largo al que se conectaban todas las computadoras, como medio de transmisión compartido. Existía la ethernet gruesa y la ethernet delgada. En estas redes era posible crear redes más grande utilizando repetidores (que operan en capa física) y amplifican o redirigen señales. Aquí se soportan los tres tipos de comunicación vistos: multicasting, broadcasting (todos los bits en 1) y unicast. Las direcciones MAC tienen una longitud de 48 bits divididos en 6 bytes, a estas direcciones se les llama físicas pues se graban en el hardware, en teoría cada dispositivo tiene una dirección única. Los primeros tres bytes son un identificador único organizacional (asignados a los fabricantes de hardware, IEEE las define), los últimos 3 bytes se agregan como bytes adicionales a los ya predefinidos.
+Con el paso de los años se ha definido una longitud mínima para las tramas para que sean reconocibles por los dispositivos, esta longitud es de 64 bytes, se calcula desde la dirección de destino hasta la suma de verificación, se excluye el preámbulo pues se puede enviar una trama vacía. 
+
+Conmutada: cada estación o dispositivo cuenta con un cable dedicado que llega a un hub (concentrador) central/switch/conmutador. A diferencia de un conmutador, un hub conecta de manera eléctrica todos los cables que llegan a él, en cambio, en un conmutador, cada cable que llega se gestiona de manera independiente. Un hub da la posibilidad de que hayan muchas colisiones, en cambio el conmutador procesa las tramas de manera independiente y las redirige a uno o más puertos según el caso. En la red conmutada se utilizan switches los cuales tienen un plano posterior (backplane) donde se conectan todos los puertos, a un conmutador se le puede conectar otro conmutador y hacer crecer la red.
+-> Dominio de colisión: en un hub, todas las estaciones están en el mismo dominio de colisión, se deben usar algoritmos CSMA/CD para programar las transmisiones. En un switch, cada puerto es su propio de colisión independiente. Si el cable es half-duplex (ambas direcciones pero no al mismo tiempo), la estación y el puerto deben competir por la transmisión con CSMA/CD.
+En la ethernet conmutada hay varios tipos de ethernet:
+	- fast ethernet: la idea era mantener todos los formatos, interfaces y reglas hasta el momento, pero aumentando las tasas de transmisión. Esto da el caso en que dos dispositivos se comunicaran a tasas distintas, por lo que se introduce la autonegociación: dos estaciones negocian de manera automática la velocidad óptima a la cual van a operar y la duplicidad del enlace (si es half duplex o full duplex). En fast ethernet hay varias implementaciones de acuerdo con el medio utilizado: 100Base-TX (full duplex, cables de par trenzado de categoría 5 minimo, codificación 4b/5b). 100Base-FX (dos fibras, una para cada dirección, full duplex con 100 Mbps por dirección, distancias de hasta 2km).
+	- gigabit ethernet: ofrecer servicios de datagramas sin confirmaicón de recepción con unicast y multicast, utilizando el mismo esquema de direccionamiento y el formato de la trama. 1000Base-SX, 1000Base-LX, 1000Base-CX, 1000Baste-T.
+	- 10 gigabit ethernet: utilizan codificación 64b/66b y trabajan la mayoría con fibra óptica. 
+	
+	
+-------
+VIDEO 3
+-------
+
+
+Arquitectura de las redes WLAN: se requiere de un punto de acceso (dispositivos que crean la red inalámbrica y la publican para que otros clientes puedan conectarse), pero no se prescinde de las redes alámbricas que conectan dispositivos intermedios como AP, conmutadores y enrutadores. Utilizan el estándar IEEE 802.11, donde hay varias versiones (b, g y n las más comunes), algunas versiones operan en 2,4 GHz o 5 GHz o en ambos. Algunos AP soportan varias versiones para adaptarse al contexto.
+Para evitar colisiones se utiliza el protocolo CSMA/CA, similar al de ethernet, solo que con detección del canal antes de enviar las tramas y retroceso exponencial después de las colisiones. Cada estación cuando detecta que el canal está desocupado, recurre a un retroceso (no envía la trama de una vez).
+Aún así, en casos de colisiones hay dos técnicas para lidiar con ellas:
+	
+	1. DCF (función de coordinación distribuida): las estaciones actúan de manera independiente sin coordinación central.
+	2. PCF (función de coordinación puntual): el punto de acceso controla toda la actividad inalámbrica.
+	
+Problemas con transmisiones inalámbricas:
+
+	1. Terminal oculta: un dispositivo no se da cuenta que otro transmite pues están fuera del rango de alcance.
+	2. Terminal expuesta: un dispositivo está expuesto a la transmisión de otro, por lo que cree que el canal está ocupado siempre (aunque no lo esté).
+	
+Para mejorar la coordinación de quién envía y quién recibe, se realiza una detección física y virtual del canal. Mecanismo RTS/CTS: evita que las terminales envíen tramas al mismo tiempo: se envía una trama de una estación a otra indicándole que desea enviar datos, la estación receptora responde con una confirmación de que el canal está libre. El emisor envía la trama de datos e inicia el temporizador para recibir la confirmación, si el receptor recibe la trama de datos, envía la confirmación. Si el temporizador en el emisor expira y no ha recibido la confirmación, se considera como una colisión y se lleva a cabo el proceso de nuevo. 
+Para mejorar el envío y recepción de tramas, se pueden enviar/recibir conjuntos de datos más pequeños. Para ello, se debe fragmentar los datos en múltiples tramas, se enumeran de forma individual y la confirmación de recepción se recibe por separado para cada trama.
+En 802.11 se puede gestionar la energía del dispositivo utilizando tramas baliza, que son difusiones periódicas que realiza el AP y anuncia su presencia a los clientes junto con los parámetros del sistema (id del AP, tiempo, cuánto falta para la siguiente baliza y configuración de seguridad). Otra forma de ahorrar energía es usar buffers con el mecanismo de entrega automática con ahorro de energía (APSD), donde los AP colocan las tramas en un buffer y las envía a un cliente justo después de que este envíe tramas al AP.
+
+-> Calidad del servicio (QoS): en la subcapa MAC se busca extender el CSMA/CA con intervalos definidos entre las tramas, para que una estación espere un tiempo antes de enviar otra trama.
+
+Estructura de las tramas 802.11: hay tres tipos de tramas (de datos, de control y de administración).
+	Control de trama | duración | direccion recept | direccion emisor | dirección 3 | secuencia | datos | suma de verif.
+En el control de trama se indican las banderas asociadas a esa transmisión. Las tramas de datos y de administración son iguales. Las tramas de control no tienen datos y pueden tener solo una dirección. 
+
+Servicios ofrecidos en una red WLAN:
+	1. Asociación: permite a estaciones móviles para conectarse a los AP.
+	2. Reasociación: una estación cambie su AP preferido.
+	3. Desasociación: una estación rompa la relación con un AP.
+	4. Autenticación: las estaciones se autentican ante el AP antes de enviar las tramas, dependen del esquema de seguridad del AP.
+	5. Distribución: indica cómo encaminar las tramas.
+	6. Integración: maneja la traducción necesaria para enviar una trama fuera de la red 802.11, o para que llegue desde el exterior.
+	7. Entrega de datos: permite a las etaciones enviar y recibir datos mediante los protocolos.
+	8. Privacidad: la señal inalámbrica se usa para mantener la confidencialidad de los datos enviados (se cifran).
+	9. Programación de tráfico: maneja el tráfico con distintas prioridades.
+	10. Control de potencia de transmisión: brinda a las estaciones la info necesaria para cumplir con los límites regulatorios sobre la potencia de la transmisión.
+	11. Selección de frecuencia dinámica: ofrece a las estación la posibilidad de elegir la frecuencia de transmisión.
+	
+	
+Otro tipo aparte de la WLAN es la Banda ancha inalámbrica (802.16), se le conoce como WIMAX, todos los servicios son orientados a la conexión. Las primeras versiones proporcionaban un lazo local inalámbrico entre puntos fijos con una línea de visión entre sí. 
+
+Bluetooth: para interconectar dispositivos a través de radios inalámbricos de bajo consumo energético, de corto alcance y económicos, permite a los dispositivos emparejarse. La unidad básica de un sistema bluetooth es piconet, que consta de un nodo maestro y hasta siete nodos esclavos activos, a una distancia máx de 10m, dos piconets se conectar para formar un scatternet. 
+
+RFID (identificación por radio frecuencia): se utiliza en tarjetas inteligentes, implantes, pasaportes, etc, que sustituye a un código de barras de un producto. Utiliza comunicaciones de corto alcance, permitiendo a un producto que sea identificado al pasar por un detector. Tiene dos componentes: etiquetas y lectores. Etiquetas: son pequeños dispositivos que tienen un identificador ECP único de 96 bits y una pequeña memoria que el lector RFID puede leer y escribir. Lectores: son más poderosos que las etiquetas, su tarea es generar un inventario de las etiquetas en el vecindario. La energía requerida para que las etiquetas funcionen se obtiene de las señales recibidas de los lectores, mediante un mecanismo conocido como retrodispersión, lo que hace que las etiquetas no requieran de una fuente de alimentación.
+
+
+-------
+VIDEO 4
+-------
+
+
+Conmutación en la capa de enlace de datos
+Los conmutadores operan en la capa de enlace de datos, examinando las direcciones para reenviar las tramas. Cuando hay muchas estaciones en una misma red ethernet, todas comparten el ancho de banda. 		
+Para separar las redes LAN mediante conmutadores, se utilizan dos algoritmos:
+	1. Un algoritmo de aprendizaje hacia atrás para detener el tráfico que se envía a donde no es necesario.
+	2. Un algoritmo de árbol de expansión para romper los ciclos que se forman cuando los conmutadores se conectan entre sí de manera no intencional.
+	
+Topología: los conmutadores funcionan en modo promiscuo (pueden ver todas las tramas que se envían en la LAN), el algoritmo es el de aprendizaje hacia atrás, utilizadas para construir la tabla de direcciones MAC. Cuando se detecta una dirección fuente que no está en la tabla, se anota de qué lado viene esa trama y se asocia la dirección con el segmento al que pertenece, en algún momento el conmutador tendrá la tabla completa. 
+
+Enrutamiento en conmutadores: depende del puerto por el que ingresa una trama, si el puerto de origen es el mismo que el de destino, se desecha la trama. Si los puertos son distintos, se reenvía la trama por el puerto de destino. Si se desconoce el destino, se recurre a la inundación y se envía la trama por todos los puertos excepto por el de origen. 
+El algoritmo de árbol de expansión permite que los conmutadores funcionen correctamente, pues algunas tramas pueden enciclarse entre conmutadores. Aquí se considera la topología como un grado, en la que los conmutadores son los nodos y los enlaces punto a punto son los bordes. El grafo se reduce a un árbol de expansión, el cual no tiene ciclos. Se debe escoger una conexión que sea la raíz del árbol, se construye un árbol con las rutas más cortas desde la raíz a cada uno de los conmutadores, cada conmutador recuerda la ruta más corta hacia la raíz y luego los conmutadores solo desactivan los puertos que no forman parte de la ruta más corta, garantizando que no haya ciclos. 
+Además de los conmutadores, hay otros dispositivos: repetidores, hubs, puentes, switches, enrutadores y gateways.
+
+Redes VLAN: permiten crear separaciones lógicas de la red, para definir reglas como enrutamiento, acceso a recursos, etc. Se basan en conmutadores especialmente diseñados para esto, para configurarla, el administrador de la red decide cuántas VLAN habrán en la red, cuáles computadores estarán en las VLAN y los nombres de las VLAN. Para que funcionen, es necesario establecer tablas de configuración en los conmutadores, que indican cuáles VLAN se pueden acceder a través de qué puertos. Estas redes utilizan el estándar 802.1Q, que define un nuevo formato de trama que contiene una etiqueta VLAN, para identificar las tramas que vienen de un puerto y de una VLAN particular, con base en la etiqueta, los conmutadores enrutan las tramas entre las distintas VLAN. Los campos VLAN solo los utilizan los puentes y conmutadores, no los usuarios.

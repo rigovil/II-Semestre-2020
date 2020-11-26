@@ -194,3 +194,60 @@ Cuando se transmite información hacia otras redes lejanas, es posible que los p
 	- deseo de eivtar que un paquete ocupe el canal demasiado tiempo.
 	
 Como cada red define el tamaño máximo de los paquetes, es necesario  que se conozca esto para dividr el paquetes en los fragmentos del tamaño adecuado.  Además, dado que una fuente no conoce la ruta que tomará un paquete a través de la red hacia un destino, no se sabe qué tan pequeños deben ser los paquetes, para ellos se recurre al MTU de la ruta (unidad de transmisión máxima de la ruta), donde cada paquete IP se envía con sus bits de encabezado establecidos para indicar que no se puede realizar ningún tipo de fragmentación, si un enrutador recibe un paquete más grande, genera un paquete de error de vuelta, lo regresa a la fuenta y descarta el paquete, de manera que el emisor vuelva a fragmentar el paquete. De esta forma los enrutadores trabajan menos.
+
+
+-------
+VIDEO 6
+-------
+
+Capa de red de Internet
+Internet: conjunto de redes conectadas entre sí. Hay varias redes troncales principales que se construyen a través de líneas de alto ancho de banda y enrutadores rápidos (redes de nivel 1), conectadas a estas redes están los ISP, a las redes regionales se conectan otros ISP. Para que todas las redes funcionen, se utiliza el protocolo IP.
+La IPv4 es una versión, un datagrama IPv4 consiste en un encabezado y el cuerpo/carga útil. El encabezado es una parte fija de 20 bytes y una parte opcional de longitud variable, en la carga útil se coloca la información de la capa de transporte. 
+
+Direcciones IP: de 32 bits. Posee un prefijo para representar las máscaras de red, es decir la cantidad de bits en 1 en la máscara de red. Las direcciones IP tienen dos partes, la primera asociada a la dirección de la red (bits 1 en la máscara) y la siguiente parte está asociada a la dirección del host. Con una operación AND de la máscara de subred y la dirección IP, se puede extraer la dirección de la red.
+Las direcciones son jerárquicas.
+	- ventajas: los enrutadores pueden reenviar paquetes con base en la porción de red de la dirección, siempre que las redes tengan un bloque de direcciones único. Además que permite escalar fácilmente.
+	- desventajas: la dirección ip de un host depende de su ubicación en la red, cada dirección ip pertenece a una red específica, por lo que los enrutadores solo pueden enviar paquetes destinados a esa dirección de red. La jerarquía desperdicia direcciones a menos que se administre con cuidado.
+	
+Para aprovechar el espacio de direcciones disponibles, se recurre al subneteo, que divide el bloque de direcciones en varias partes para uso interno en forma de múltiples redes, pero actuando como una sola red para el mundo exterior, a estas partes de la red se les llaman subredes. Para evitar conflictos, la ICANN administra el espacio de direcciones delegando a autoridades regionales repartir las direcciones IP a los ISP y otras compañías.
+Cuando se trabajan con subredes, se lleva a cabo un enrutamiento interdominio sin clases (CIDR), donde las rutas se asocian a una subred y una máscara particular. La agregación de rutas consiste en unir subredes pequeñas en una red más grande con un prefijo más bajo que engloba tods las redes pequeñas.
+
+NAT: traducción de direcciones de red. El ISP asigna a cada hogar o negocio una o varias direcciones IP para el tráfico de internet, dentro de la red del cliente, cada computadora obtiene una dirección ip única privada, justo antes de que un paquete salga de la red del cliente hacia el ISP, la dirección IP interna se traduce a la dirección ip pública. La traducción hace uso de tres rangos de direcciones IP que se han declarado como privados. Para la traducción se usan los puertos TCP, enteros de 16 bits que indican dónde empieza y dónde acaba la conexión. Cuando un proceso desea hacer una conexión TCP, se conecta a un puerto sin usar en su propia máquina (puerto origen) y le indica al código TCP Dónde enviar los paquetes entrantes. El proceso también proporciona un puerto destino para indicar a quién se deben dar los paquetes. 
+	- NAT viola el modelo arquitectónico de IP que establece que cada dirección identifica a una sola máquina de forma única a nivel mundial.
+	- NAT quebranta el modelo de conectividad de extremo a extremo de internet, donde cualqueir host debería poder enviar un paquete a cualquier otro host en cualquier momento.
+	- NAT hace de internet un tipo especial de red orientado a la conexión.
+	- NAT viola las reglas de los protocolos distribuios en capas, donde una capa cualquiera no puede hacer suposiciones acerca de capas superiores.
+	
+IPv6: creado para soportar miles de millones de hosts, reducir el tamaños de las tablas de enrutamiento, proporcionar mayor seguridad, ayudar a la multidifusión, permitir que un host no tenga que cambiar su dirección, permitir que IPv4 y IPv6 coexistieran durante años. Las direcciones se representan mediante ocho grupos de cuatro dígitos hexadecimales, cada gurpo separado por dos puntos. 
+
+ICMP (protocolo de mensajes de control de internet): utilizado por los enrutadores para supervisar el funcionamiento de internet, cuando ocurre algo inesperado durante el procesamiento de un paquete, ICMP informa sobre el evento al emisor, hay varios tipos de mensajes de ICMP, cada uno de los cuales se encapsula dentro de un paquete IP.
+	- destino inaccesible
+	- tiempo excedido
+	- problema de parámetros
+	- redireccionar
+
+
+ARP (protocolo de resolución de direcciones): permite a los dispositivos conectados a una red realizar una traducción de las direcciones IP a las direcciones correspondiente a la capa de enlace de datos o direcciones MAC. Es útil para comunicación entre dispositivos en una misma red.
+
+DHCP (protocolo de configuración dinámica de host): permite a un dispositivo adquirir una dirección ip de una forma fácil, el dispositivo envía un msj broadcast denominado DHCP DISCOVER con el que busca un servidor en la red, cuando el servidor recibe una solicitud asigna una dirección IP y le envía al dispositivo mediante un paquete DHCP OFFER, la cual puede ser aceptada.
+
+MPLS: agrega una etiqueta en frente de cada paquete, el reenvío se basa en la etiqueta en vez de la dirección de destino.
+
+OSPF: es un protocolo de enrutamiento de puerta de enlace interior, dentro de su propia red, una organización puede usar su propio algoritmo de enrutamiento interno. OSPF e IS-IS son los protocolos de enrutamiento intra-dominio predominantes en internet. Mensajes:
+	- hello
+	- link state update
+	- link state ack
+	- database description
+OSPF permite dividir un sistema autónomo en áreas numeradas, donde cada área es una red o un cojunto de redes contiguas, las área no se traslapan y los enrutadores que están dentro se llaman enrutadores internos, cada área es independiente. 
+
+BGP (protocolo de enrutamiento de puerta de enlace exterior): es un protocolo de enrutamiento interdominio, se diseñan para permitir que se implementen muchos tipos de políticas de enrutamiento en el tráfico entre sistemas autónomos. Para implementar una política de enrutamiento hay que decidir qué tráfico puede fluir a través de cuáles enlaces entre los sistemas autónomos. EJ: no transportar trafico comercial en una red educativa.
+
+Multidifusión de internet: el protocolo ip apoya la multidifusión mediante direcciones ip clase D. 
+224.0.0.0/24 -> multidifusión en la red local.
+	- 224.0.0.1 todos los sistemas en una LAN
+	- 224.0.0.2 todos los enrutadores en una LAN
+	- 224.0.0.251 todos los servidores DNS en una LAN.
+	
+Periodicamente, cada enrutador de multidifusión envía un paquete de consulta a todos los hosts en la LAN y les pide que se reporten de vuelta a los grupos que pertenecen. Cada host envía respuestas de todas las direcciones de multidifusión en las que está interesado. Estos paquetes utilizan un protocolo de administración  de grupo de internet (IGMP).
+
+IP Móvil: establece la creación de un agente base en la red de la organización el cual se encarga de interceptar las comunicaciones que vayan hacia el host móvil, cuando el host móvil sale de la red, debe reportar al agente base su dirección actual (dirección de custodia), con base en la dirección local del host móvil y la dirección de custodia, el agente base sirve como intermediario en la comunicación, creando un túnel ip  para enviar los msjs hacia el host móvil, así todos los dispositivos pueden comunciarse con él sin necesidad de saber dónde está el dispositivo o su dirección.
