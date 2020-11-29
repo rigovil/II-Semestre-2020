@@ -1,0 +1,41 @@
+Buenas noches profe, tengo varios reclamos del primer examen de oper, hasta ahora tengo tiempo de revisar el examen en detalle entonces espero que todavía se pueda reclamar. Gracias de antemano 
+Carné: B78292, nombre: Rodrigo Vílchez Ulloa
+
+Las preguntas son las siguientes:
+
+18. Indique tipos distintos de servicios provistos por el sistema operativo (system services):
+
+Mis respuestas fueron: interfaz de usuario, manipulación de archivos y  comunicación entre procesos. 
+Esta última la marca como mala, pero según dice el libro la comunicación a la que hace referencia el servicio provisto por el S.O es a la que hay entre distintos procesos (pag. 57 del libro)
+
+
+24. Los siguientes son ambientes de computación (computing environments):
+
+Mis respuestas fueron: computación móvil, computación cliente-servidor y sistemas empotrados en tiempo real. 
+El libro en la página 52 menciona esos ambientes, no los escribí en orden alfabético porque esa indicación me salió hasta que terminé el examen.
+
+
+28. Indique dos elementos a tomar en cuenta para diseñar los sistemas operativos.
+
+Mis respuestas fueron: 1. Sus mecanismos y políticas. 2. Objetivos de diseño: para qué va a ser el S.O.
+
+En la página 79 del libro, en la sección 2.7 se habla de que esos dos son aspectos que se deben tomar en cuenta al momento de diseñar e implementar un sistema operativo.
+
+
+32. Relacionado con las unidades de almacenamiento masivo, el sistema operativo realiza la siguientes tareas:
+
+Mis respuestas fueron: montar y desmontar, manejar particiones.
+
+Dice que las respuestas esperadas eran montar y desmontar, por separado. En la página 30 se mencionan tareas como montar y desmontar, manejar particiones y otras posibles cuatro más.
+
+
+39. Las siguientes son distintas estrategias de depuración para el desarrollo de sistemas operativos: 
+
+Mis respuestas: tracing, análisis de fallos, monitero y afinación. 
+La última la marca como incorrecta y en la página 96 se indica que esa es una técnica de depuración.
+
+
+40. Dentro de las tareas que realiza el sistema operativo relacionado con la administración de procesos están:
+
+Mis respuestas: crear y eliminar. 
+Eliminar la marca como mala pues la respuesta esperada es destruir, pero se refiere a lo mismo.
