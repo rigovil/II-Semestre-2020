@@ -1,0 +1,237 @@
+VIDEO: 5 octubre parte 1 | 12 octubre parte 1
+
+
+---------------------- 3.1 CONCEPTO DE PROCESO ----------------------
+
+
+Job: rol de un sistema operativo.
+
+3.1.1 PROCESO
+
+Un proceso es un programa en ejecución, su estado es representado por el valor del PC y el contenido de los registros. La disposición de memoria de un proceso se divide en secciones:
+
+	i. text section: código ejecutable
+	ii. data section: variables globales
+	iii. heap section: memoria asignada dinámicamente en ejecución
+	iv. stack section: datos temporales cuando se llaman funciones.
+	
+El tamaño del heap y stack crecen dinámicamente durante la ejecución. Crecen en dirección hacia el otro, el S.O controla que no se junten.
+Maneras de ejecutar un programa: clicks, CLI con su nombre.
+
+3.1.2 ESTADO DE UN PROCESO
+
+Un proceso cambia de estado conforme se va ejecutando. Algunos estados son:
+	
+	i. nuevo (new): proceso está siendo creado.
+	ii. corriendo (running): instrucciones se están ejecutando.
+	iii. esperando (waiting): esperando un evento.
+	iv. listo (ready): esperando a ser asignado a un procesador.
+	v. terminado (terminated): finaliza ejecución
+	
+3.1.3 PROCESS CONTROL BLOCK (PCB)
+
+Cada proceso es representado en el S.O por un PCB que contiene información de un proceso específico:
+
+	i. estado del proceso.
+	ii. PC.
+	iii. registros.
+	iv. información de asignación de la CPU.
+	v. información de manejo de memoria.
+	vi. información de contabilidad
+	vii. información del estado I/O.
+	
+3.1.4 HILOS
+
+En sistemas multinúcleo el PCB se expande para tener información de cada hilo de un proceso.
+
+
+---------------------- 3.2 ASIGNACIÓN DE UN PROCESO ----------------------
+
+
+Hay un asignador de procesos que elige un proceso disponiblke para que sea ejecutado en un núcleo. Número de procesos en memoria: grado de multiprogramación. Proceso vinculado a I/O: pasa más tiempo en I/O que en cálculos. Proceso vinculado al CPU: pasa más tiempo haciendo cálculos que en I/O.
+
+3.2.1 COLAS DE ASIGNACIÓN
+
+Ready queue: procesos listos y esperando por ejecución, simplemente enlazada, contiene punteros de los PCB.
+Wait queue: procesos esperando que ocurra cierto evento.
+
+3.2.2 ASIGNACIÓN DE CPU
+
+El asignador de CPU selecciona entre los procesos en la ready queue y asignarle a uno el CPU.
+Swapping: técnica de algunso S.O de sacar un proceso de memoria y mandarlo a disco para reintroducirlo después para que continúe su ejecución.
+
+3.2.3 CONTEXT SWITCH
+
+Contexto: valor de los registros, estado del proceso y la información de manejo de memoria. 
+Cuando ocurre un cambio de contexto, el kernel guarda el contexto del proceso en su PCB y carga el contexto de un nuevo proceso. El sistema no hace ningún otro trabajo útil mientras cambia de contexto.
+
+
+---------------------- 3.3 OPERACIONES EN UN PROCESO ----------------------
+
+
+3.3.1 CREACIÓN DE UN PROCESO
+
+Los S.O identifican a un proceso con un pid único. En linux, systemd es el primer proceso creado al arrancar. Logind es el proceso encargado del acceso de usuarios al sistema. 
+
+Cuando un proceso crea otro proceso, hay dos posibilidades de ejecución:
+
+	i. el padre se ejecuta concurrentemente con el hijo.
+	ii. el padre espera a que el hijo o sus hijos terminen.
+	
+También hay dos posibilidades para el espacio de direcciones:
+
+	i. el hijo es un duplicado del proceso padre.
+	ii. el hijo tiene un nuevo programa cargado.
+	
+3.3.2 FINALIZACIÓN DE UN PROCESO
+
+Un proceso termina cuando finaliza su ejecución y cuando se llama al syscall exit() para eliminarlo del sistema, retornando un valor de estado al proceso padre, todos los recursos son desasignados y los recupera el S.O. Un proceso padre puede terminar a un proceso hijo (abort()) por alguna de estas razones:
+
+	i. el hijo ha excedido el uso de algunso recursos.
+	ii. la tarea del hijo ya no es requerida.
+	iii. el padre está terminando y el S.O no deja a ningún hijo seguir ejecutando si el padre termina.
+	
+Terminación en cascada: el S.O no deja ningún proceso hijo seguir ejecutándose si el padre termina, entonces todos los hijos son terminados. 
+Un proceso padre espera a que un hijo termine con wait().
+Proceso zombie: un proceso que terminó pero que su padre no ha llamado a wait().
+Proceso huérfano: proceos cuyo padre no llama a wait().
+
+3.3.2.1 Jerarquía de procesos en Android
+
+Por la limitación de los recursos en un S.O móvil, en android se implementa una jerarquía de procesos para terminarlos y recuperar esos recursos. De mayor a menor importancia:
+
+	i. procesos en primer plano.
+	ii. procesos visibles.
+	iii. procesos de servicio.
+	iv. procesos en segundo plano.
+	v. procesos vacíos
+	
+	
+---------------------- 3.4 COMUNICACIÓN ENTRE PROCESOS ----------------------
+
+
+Proceso independiente: si no comparte datos con ningún otro proceso.
+Proceso de cooperación: si afecta o puede ser afectado por otro proceso.
+
+Razones para permitir cooperación entre procesos:
+
+	i. compartir información.
+	ii. aceleración de cálculos.
+	iii. modularidad.
+	iv. conveniencia.
+	
+IPC (comunicación entre procesos): hay dos formas de comunicarse: memoria compartida y paso de mensajes.
+
+
+---------------------- 3.5 IPC IN SHARED-MEMORY SYSTEMS ----------------------
+
+
+Un proceso ata un segmento de memoria compartido a su espacio de memoria. Hay un proceso producto y un proceso consumidor, que comparten un buffer donde están los recursos que pueden ser consumidos pues ya han sido producidos. Hay dos tipos de buffer:
+
+	i. unbounded buffer: no hay un límite en el tamaño de buffer.
+	ii. bounded buffer: hay un tamaño para este buffer
+	
+	
+---------------------- 3.6 IPC IN MESSAGE-PASSING SYSTEMS ----------------------
+
+
+Se proveen al menos dos operaciones: enviar y recibir. Mensaje puede ser de tamaño fijo o variable. Formas de implementar lógicamente un enlace y las operaciones enviar y recibir:
+
+	i. comunicación directa o indirecta.
+	ii. comunicación sincrónica o asincrónica.
+	iii. buffering automático o explícito.
+	
+Formas físicas de implementar un enlace:
+
+	i. bus.
+	ii. memoria compartida.
+	iii. redes.
+	
+3.6.1 NAMING
+
+Para poder referirse a un proceso y enviarle un mensaje. En comunicación directa se indica explícitamente el nombre del emisor y receptor del mensaje. Un enlace bajo este esquema tiene estas propiedades:
+
+	i. se establece un enlace automáticamente entre un par de procesos.
+	ii. un enlace se asocia con dos procesos.
+	iii. entre un par de procesos existe únicamente un enlace.
+	
+Este esquema provee un direccionamiento simétrico (emisor y receptor saben quiénes son) y asimétrico (solo el emisor nombra al receptor).
+
+En comunicación indirecta los mensajes se envían y se reciben desde mailboxes o puertos. Propiedades de un enlace así:
+
+	i. un enlace se establece entre un par de procesos si ambos comparten un mailbox.
+	ii. un enlace se puede asociar con más de dos procesos.
+	iii. pueden haber varios enlaces entre dos procesos.
+	
+Un S.O le permite a un proceso:
+
+	i. crear un mailbox.
+	ii. enviar y recibir a través del mailbox.
+	iii. eliminar un mailbox.
+	
+3.6.2 SINCRONIZACIÓN
+
+El paso de mensajes puede ser bloqueante o no bloqueante (sincrónico/asincrónico).
+
+	i. envío bloqueante: el proceso que envía es bloqueado hasta que el mensaje sea recibido.
+	ii. envío no bloqueante: el proceso envía un mensaje y continúa su operación.
+	iii. recepción bloqueante: el proceso que recibe está bloqueado hasta que haya un mensaje disponible.
+	iv. recepción no bloqueante: el proceso puede recibir un mensaje válido o nulo.
+	
+Si ambos son bloqueantes, se dice que es una cita.
+	
+3.6.3 BUFFERING
+
+Los mensajes intercambiados residen en una cola temporal que puede ser implementada de tres formas:
+
+	i. capacidad zero: no existe capacidad para encolar mensajes, el emisor se bloquea hasta que el receptor reciba el mensaje.
+	ii. capacidad limitada: si se llena, el emisor se bloquea hasta que haya espacio.
+	iii. capacidad ilimitada: el emisor nunca se bloquea
+	
+	
+---------------------- 3.7 EJEMPLOS DE SISTEMAS IPC ----------------------
+
+
+3.7.1 POSIX SHARED MEMORY
+
+Utiliza archivos mapeados en memoria, se asocia una región de memoria compartida con un archivo.
+
+3.7.2 MACH MESSAGE PASSING
+
+Los mensajes se envían y se reciben desde mailboxes llamados puertos, que son finitos en tamaño y unidireccionales. Se asocian permisos de puerto a cada uno. Los mensajes pueden ser simples o complejos.
+
+3.7.3 WINDOWS
+
+También utiliza puertos para mantener una conección entre dos procesos, hay dos tipos: puertos de conexión y de comunicación. Hay tres técnicas para paso de mensajes. (p. 139)
+
+3.7.4 PIPES
+
+Actúa como un conducto para permitir la comunicación entre procesos. Se deben considerar cuatro aspectos:
+
+	i. comunicación bidireccional o unidireccional.
+	ii. comunicación half o full duplex.
+	iii. existencia de una relación padre-hijo entre procesos que se comunican.
+	iv. comunicación entre redes o solo en la misma máquina.
+	
+3.7.4.1 Ordinary pipes
+
+No pueden ser accedidos desde fuera del proceso que los creó, usualmente se usan para que un proceso padre se comunique con un proceso hijo. Son unidireccionales.
+
+3.7.4.2 Named pipes
+
+Pueden ser accesados sin necesidad de haber una relación padre-hijo entre procesos. Son bidireccionales.
+
+
+---------------------- 3.8 COMUNICACIÓN EN SISTEMAS CLIENTE-SERVIDOR ----------------------
+
+
+3.8.1 SOCKETS
+
+Un socket es considerado como un punto final en una comunicación. Si identifica con una dirección IP y un puerto. Cada conexión es única. EJ: java permite tres tipos de sockets (TCP, UDP, Multicast).
+
+3.8.2 REMOTE PROCEDURE CALLS
+
+Comunicación bien estructurada. Cada mensaje es direccionado a un RPC daemon que escucha en un puerto, y cada uno de estos contiene un id que especifica cada funcion a ejecutar y sus parámetros. Permite a un cliente invocar un procedimiento en un host remoto. Provee un stub (talón) en el lado del cliente para permitir la comunicación. Cuando el cliente invoca un un procedimiento remoto, se llama al stub correspondiente, que localiza al puerto en el servidor y ordena los parámetros. El stub transmite el mensaje. Un stub similar en el servidor recibe el mensaje e invoca el procedimiento. Para solventar diferencias de arquitectura entre cliente y servidor, se utiliza XDR (representación externa para datos). Los S.O suelen proveer un matchmaker service para conectar un cliente y servidor.
+El network byte order es big endian.
+
+(Otras formas no indicadas por el libro son: RMI y Web Services)
