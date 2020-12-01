@@ -1,0 +1,168 @@
+VIDEO: 2 noviembre parte 2 | 9 noviembre parte 1
+
+---------------------- 4.1 HILOS Y CONCURRENCIA ----------------------
+
+
+4.1.2 BENIFICIOS
+
+	i. sensibilidad.
+	ii. recursos compartidos: hilos comparten la memoria del proceso.
+	iii. economía.
+	iv. escalabilidad.
+	
+
+---------------------- 4.2 PROGRAMACIÓN MULTINÚCLEO ---------------------- 
+
+
+Un sistema concurrente es aquel que soporta más de una tarea. Un sistema paralelo puede ejecutar más de una tarea de manera simultánea.
+
+4.2.1 DESAFÍOS DE PROGRAMACIÓN
+
+	i. identificar las tareas.
+	ii. balance (carga de trabajo).
+	iii. separación de datos.
+	iv. dependencia de datos.
+	v. testing y depuración.
+	
+4.2.2 TIPOS DE PARALELISMO
+
+	i. paralelismo de datos: distribuye parte de un conjunto de datos entre muchas computadoras.
+	ii. paralelismo de instrucciones: distribuye las tareas entre las computadoras, no necesariamente conel mismo conjunto de datos.
+	
+
+---------------------- 4.3 MODELOS MULTIHILO ----------------------
+
+
+Se distingue entre hilos de usuario e hilos del kernel.
+
+4.3.1 MANY-TO-ONE MODEL
+
+Mapea algunos hilos de usuario a un hilo de kernel. Todos se bloquean si hay un syscall.
+
+4.3.2 ONE-TO-ONE MODEL
+
+Mapea cada hilo de usuario a un hilo de kernel.
+
+4.3.3 MANY-TO-MANY MODEL
+
+Multiplexa varios hilos de usuario a una cantidad igual o menor de hilos en el kernel.
+
+
+---------------------- 4.4 LIBRERÍAS PARA HILOS ----------------------
+
+
+Formas de implementar una librería para hilos:
+	
+	i. proveer una librería completa en el user space sin ayuda del kernel.
+	ii. implementarla a nivel de kernel con ayuda del S.O
+	
+Librerías principales actualmente: POSIX Pthreads, Windows y Java.
+En Pthreads y Windows las variables globales son compartidas, en Java no porque no existe el concepto de globalidad. Existen de forma asíncrona y sinrónica, estos últimos son cuando el hilo padre crea hilos hijos y espera a que estos terminen, en el modo asincrónico el padre resume su ejecución una vez que crea los hilos.
+
+4.4.1 PTHREADS
+
+Es una especificación para el comportamiento de los hilos y no una implementación. Los diseñadores de los S.O eligen cómo implementarlos.
+
+4.4.2 WINDOWS THREADS
+
+Igualmente los datos compartidos son los declarados globalmente.
+
+4.4.3 JAVA THREADS
+
+Al iniciar un hilo sucede lo siguiente: se asigna memoria y se inicializa el hilo en la máquina virtual, se llama al método run().
+
+
+---------------------- 4.5 IMPLICIT THREADING ----------------------
+
+
+Para enfrentar las dificultades y para mejorar el diseño de aplicaciones concurrentes, una forma es utilizar el implicit threading, donde se transfiere la creación y manejo de hilos hacia los compiladores y librerías en tiempo de ejecución. La idea es identificar tareas (no hilos) que puedan correr en paralelo.
+
+4.5.1 THREAD POOLS
+
+La idea es crear un número de hilos al inicio y colocarlos en una piscina donde espearn para comenzar a trabajar. Por ejemplo, cuando se hace una solicitud a un servidor, entonces se busca un hilo en la piscina que esté disponible, y cuando termina se regresa a la espera de otra petición. Beneficios:
+
+	i. es más rápido usar un hilo ya creado que crear uno por petición.
+	ii. se limita el número de hilos que pueden exisitir.
+	iii. se pueden usar distintas estrategias para ejecutar la tarea.
+	
+La cantidad de hilos en la piscina puede ser definida desde: el número de CPUs, la cantidad de memoria física, el número esperando de clientes concurrentes.
+
+4.5.2 FORK JOIN
+
+El hilo principal crea uno o más hilos hijos y espera a que estos terminen.
+
+4.5.3 OPENMP
+
+Son directivas del compilador escritas en C,C++,FORTRAN que permiten paralelismo en ambientes con memoria compartida. Identifica regiones parales como bloque de código que pueden correr en paralelo.
+
+4.5.4 GRAND CENTRAL DISPATCH
+
+Desarrollada por Apple, es una combinación de librerías en tiempo de ejecución y extensiones del lenguaje. Asigna tareas para tiempo de ejecución en una dispatch queue, cuando se saca una tarea de la pila, se asigna a un hilo de la piscina de hilos que maneja. Hay dos tipos de colas: serial (se remueven usando FIFO, para sacar uno de la cola se debe esperar a que el que salió termine primero) y concurrente (también FIFO pero se pueden remover más de un hilo a la vez).
+
+4.5.5 INTEL THREAD BUILDING BLOCKS
+
+Los desarrolladores especifican tareas que se pueden correr en paralelo y el TBB mapea estas tareas en los hilos.
+
+
+---------------------- 4.6 THREADING ISSUES ----------------------
+
+
+4.6.1 FORK() y EXEC()
+
+Si un hilo llama a fork(), el nuevo proceso duplica los hilos o es un proceso de un solo hilo? Para eso se implementaron dos tipos de fork. Con el exec() el programa especificado reemplaza a todo el proceso, incluyendo todos los hilos.
+
+4.6.2 SIGNAL HANDLING
+
+Una señal notifica a un proceso que ha ocurrido un evento, las señales asíncronas o sincrónicas siguen un mismo patrón:
+
+	i. se genera una señal por un evento.
+	ii. la señal se envía al proceso.
+	iii. la señal debe ser manejada.
+	
+Ejemplos: división por cero, acceso ilegal a memoria. Una señal se maneja de dos formas distintas:
+
+	i. signal handler por defecto
+	ii. signal handler definido por el usuario
+	
+Cuando hay hilos, para enviar una señal hay varias opciones:
+
+	i. enviar la señal al hilo que generó el eveneto.
+	ii. enviar la señal a todos los hilos del proceso.
+	iii. enviar la señal a algunos hilos.
+	iv. asignar un hilo específico para recibir todas las señales del proceso.
+	
+4.6.3 THREAD CANCELLATION
+
+Implica terminar un hilo antes de completar su tarea. Por ejemplo, si ya un hilo encontró o hizo lo que los demás estaban haciendo (buscar en una DB por ejemplo). El hilo que se cancela es el target thread. Una cancelación de un hilo ocurre en dos escenarios:
+
+	i. cancelación asincrónica: un hilo termina al target thread.
+	ii. cancelación desreferenciada: periódicamente se verifica si el hilo debe terminar.
+	
+Puede haber problemas al termianr un hilo que está compartiendo recursos a otros hilos, etc.
+
+4.6.4 THREAD-LOCAL STORAGE
+
+Datos en el almacenamiento local de un hilo están visibles para cualquier función que se invoque dentro del hilo (no son variables locales), estos datos son únicos por hilo.
+
+4.6.5 SCHEDULER ACTIVATIONS (p. 193)
+
+
+---------------------- 4.7 EJEMPLOS EN S.O ----------------------
+
+
+4.7.1 WINDOWS THREADS
+
+Una aplicación en windows corre como un proceso separado y ese proceso puede tener varios hilos. Utiliza el mapeo one-to-one. Los componentes generales de un hilo son:
+
+	i. un id único.
+	ii. conjunto de registros para representar el estado del procesador.
+	iii. PC.
+	iv. user stack (user mode) y kernel stack (kernel mode).
+	v. un almacenamiento privado para librerías y DLLS.
+	
+iii, iv y v son parte del contexto de un hilo.
+
+4.7.2 LINUX THREADS
+
+Linux no distingue entre procesos e hilos, utiliza sin embargo el concepto de tarea. Syscalls: fork() y clone(). Existe una estructura de datos del kernel para cada tarea en el sistema, con punteros a otras estructuras de datos.
+
