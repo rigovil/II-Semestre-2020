@@ -39,16 +39,7 @@
 #define HTTP_501        "501 Not Implemented"             /*  Indica un código de respuesta en el protocolo HTTP. */
 #define HTTP_505        "501 HTTP Version not supported"  /*  Indica un código de respuesta en el protocolo HTTP. */
 
-/* CONSTANTES PARA LAS CONEXIONES */
-
-#define QUEUE   8
-#define PORT80  80
-#define MAXLINE 1024
-#define PORT50  50000
-#define PORT51  51000
-
 /* OTRAS CONSTANTES */
 
 const std::string SPEC_CHARACTERS[]   = {"á", "é", "í", "ó", "ú", "%", "2", "0"};   /*  Caracteres que se eliminan de un string específico. */
 const std::string CHARACTERS[]        = {"a", "e", "i", "o", "u", "", "", ""};      /*  Caracteres que reemplazan a los caracteres eliminados. */
-const char * BroadCastAddr[]          = {"172.16.123.15", "172.16.123.31", "172.16.123.47", "172.16.123.63", "172.16.123.79", "172.16.123.95", "172.16.123.111", "172.16.123.127", "172.16.123.143"};

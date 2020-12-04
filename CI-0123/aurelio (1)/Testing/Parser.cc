@@ -151,6 +151,84 @@ std::string Parser :: readCountry(std::string user_country) {
     
 }
 
+std::string Parser :: readLineJSON() {
+/*
+    std::ofstream file;
+    std::vector<std::string>::iterator it;
+
+    file_name = "./" + file_name;
+
+    file.open(file_name);
+    file << this->getDate() << NEW_LINE;
+    
+    for(it = this->regions.begin(); it != this->regions.end(); ++it) {
+
+      int i = ZERO;
+      std::string data;
+      std::stringstream stream(*it);
+
+      while(getline(stream, data, DELIMITER)) {
+
+        if(!i) {
+          data.erase(std::remove(data.begin(), data.end(), CHAR1), data.end());
+          data.erase(std::remove(data.begin(), data.end(), CHAR2), data.end());
+          file << data << DELIMITER;
+        }
+        else {
+          data.erase(std::remove(data.begin(), data.end(), CHAR3), data.end());
+          file << data << DELIMITER;
+        }
+
+        ++i;
+
+      }
+      
+      file << NEW_LINE;
+      
+    }
+
+    file.close();
+
+    // bool match;
+    // std::string country, flag_404;
+    // std::smatch matches;
+    // std::regex reg_exp (REG_EXP_JSON);
+    // std::regex reg_exp_sp ("\\<.*[a-z]\\>(?=\\x20[0])");
+    // // {"Country":"Costa Rica","CountryCode":"CR","Province":"","City":"","CityCode":"","Lat":"9.75","Lon":"-83.75","Confirmed":128231,"Deaths":1599,"Recovered":78851,"Active":47781,"Date":"2020-11-19T00:00:00Z"}
+    // match = std::regex_search(user_country, matches, reg_exp);
+
+    // if(match) {
+    //     country = matches.str(MATCH);
+    //     //country.erase(std::remove(country.begin(), country.end(), ','), country.end());
+    //     //country = std::regex_replace(country, std::regex("<TD>  </TD>"), "<TD> ? </TD>");
+    //     //country = std::regex_replace(country, std::regex("<TD> N/A </TD>"), "<TD> ? </TD>");
+
+    //     if(std::regex_search(country, matches, reg_exp_sp)) {
+    //         country = HTTP_404;
+    //     }
+    //     else {
+    //         // country = std::regex_replace(country, std::regex("\\<.*>(?=\\x20[A-Z])"), "");
+    //         // country = std::regex_replace(country, std::regex("\\x20+\\<.+?(?=[0-9]|\\+|\\?)"), ",");
+    //         // country = std::regex_replace(country, std::regex("  </TD>"), "");
+
+    //         if(country.length()) { country.erase(0,1); }
+        
+    //         flag_404 = country.substr(0,3);
+
+    //         if(!flag_404.compare("TD>")){
+    //             country = HTTP_404;
+    //         }
+    //     }
+    // }
+    // else {
+    //     country = HTTP_404;
+    // }
+    
+    // return country;
+*/    
+}
+
+
 
 /**
  * Crea el archivo .csv que contiene los datos cantonales.
@@ -237,6 +315,33 @@ std::string Parser :: countryCSV(std::string file_name, std::string response, bo
 
 }
 
+
+std::string Parser :: countryJSON(std::string file_name, bool exists, std::string country) {
+/*
+    std::string data;
+    std::ofstream file;
+
+    if(exists) { // abra el archivo
+        file.open(file_name, std::ios_base::app);
+    }
+    else { // o créelo
+        file.open(file_name);
+    }
+
+    data = this->readLineJSON(country); // ver esta parte
+    
+    std::cout << "CountryJSON: " << data << std::endl ;
+    
+     // encontró el dato o no existía, escríbalo en el archivo
+    // if((data.compare(HTTP_400)) && data.compare(HTTP_404)) {
+    //   file << data << NEW_LINE;
+    // }
+
+    file.close();
+
+    return data;
+*/
+}
 
 /**
  * Devuelve la fecha de última actualización del código fuente del servidor.

@@ -18,24 +18,21 @@
 
 
 
-bool fileExists(std::string);
+bool fileExists(std::string fileName);
 bool needleInHaystack(std::string, std::string, bool);
 bool queryCanton();
 void getCantones();
+void startServer();
 void queryCountry();
 void cantonParsed(std::string, int);
 void cantonLineParsed(Reader *, Parser *, int);
-void * receive(void *);
-void * listen80(void *);
-void * listen51(void *);
-void * startUpBroadcast(void *);
+void * receive(void * arr);
 std::string responseHTTP(char *);
 std::string translator(std::string);
 std::string covidData(std::string, bool, bool);
 std::string findRegion(std::string, bool);
 std::string getCountry(std::string country);
 std::string getCountryJSON( std::string country );
-
 
 
 /**
@@ -47,118 +44,44 @@ std::string getCountryJSON( std::string country );
 
 int main(int argc, char ** argv) {
 
-  pthread_t * threads = (pthread_t *) calloc(3, sizeof(pthread_t));
-  pthread_create(&threads[0], NULL, startUpBroadcast, NULL);
-  pthread_create(&threads[1], NULL, listen51, NULL);
-  pthread_create(&threads[2], NULL, listen80, NULL);
+  // std::string pais = "Dominica";
+  // std::cout << "Requested country: " << pais << std::endl;
+  // getCountryJSON( pais );
+  // return 0;
 
-  for(int i = 0; i < 3; ++i) {
-    pthread_join(threads[i], NULL);
-  }
-
+  startServer();
   return ZERO;
   
 }
 
+// int main(){
+//    std::string pais = "dominica";
+//    std::cout << "Requested country: " << pais << std::endl;
+//    getCountryJSON( pais );
+//    return 0;
+// }
 
 
-/****************************************************************/
-/* MÉTODOS PARA CONEXIONES CON SERVIDORES DE DATOS E INTERMEDIOS*/
-/****************************************************************/
-
-
-
-void * startUpBroadcast(void * arg) {
-
-  int sockfd, broadcast = 1;
-  socklen_t n, len;
-  char buffer[MAXLINE];
-  char * hello = "0,172.16.123.35,caribbean";
-  struct sockaddr_in servaddr;
-
-  std::cout << "Servidor en Broadcast..." << std::endl;
-
-  if((sockfd = socket( AF_INET, SOCK_DGRAM, 0)) < 0) {
-		perror("socket creation failed");
-		exit(EXIT_FAILURE);
-	}
-
-  setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
-  memset(&servaddr, 0, sizeof(servaddr));
-
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_port = htons(PORT50);
-
-	for(int i = 0; i < 9; ++i) {
-		servaddr.sin_addr.s_addr = inet_addr((const char *) BroadCastAddr[i]);	// Debe cambiarse a direcciones de su grupo
-		sendto(sockfd, (const char *) hello, strlen(hello), MSG_WAITALL, (const struct sockaddr *) &servaddr, sizeof(servaddr));
-		// printf( "sent to %s\n", BCAddr[i]);
-  }
-	
-  for(;;) {
-		n = recvfrom(sockfd, (char *) buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *) &servaddr, &len);
-	}
-
-	close(sockfd);
-
-}
-
-
-
-void * listen51(void * arg) {
-
-  int sockfd;
-  socklen_t n, len;
-  char buffer[MAXLINE];
-  char * hello = "0,172.16.123.35,caribbean";
-  struct sockaddr_in servaddr, cliaddr;
-
-  std::cout << "Servidor escuchando en puerto 51000..." << std::endl;
-
-  if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		perror("socket creation failed");
-		exit(EXIT_FAILURE);
-	}
-
-  memset(&servaddr, 0, sizeof(servaddr));
-	memset(&cliaddr, 0, sizeof(cliaddr));
-
-  servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = INADDR_ANY;
-	servaddr.sin_port = htons(PORT51);
-
-  if(bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
-		perror("bind failed");
-		exit( EXIT_FAILURE );
-	}
-
-  len = sizeof(cliaddr);
-
-	for(;;) {
-		n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, (struct sockaddr *) &cliaddr, &len);
-		buffer[n] = '\0';
-		printf("%s\n", buffer);
-		sendto(sockfd, (const char *)hello, strlen(hello), MSG_CONFIRM, (const struct sockaddr *) &cliaddr, len);
-	}
-
-}
+/******************************************************************/
+/* MÉTODOS DEL SERVIDOR PARA ESCUCHAR POR SOLICITUDES DEL CLIENTE */
+/******************************************************************/
 
 
 
 /**
- * Inicializa el servidor en el puerto 80 donde va a escuchar por las solicitudes HTTP del cliente.
+ * Inicializa el servidor en un puerto donde va a escuchar por las solicitudes del cliente.
  * Utiliza hilos implementados por pthreads para manejar cada consulta recibida.
  */
 
-void * listen80(void * arg) {
+void startServer() {
 
   pthread_t * threads = (pthread_t *) calloc(1, sizeof(pthread_t));
   
   int i = 0;
   Socket s1, * s2;
-  s1.Bind(80);
-  s1.Listen(QUEUE);
-  std::cout << "Servidor escuchando en puerto 80..." << std::endl;
+  s1.Bind(8080);
+  s1.Listen(5);
+  std::cout << "Servidor escuchando..." << std::endl;
 
   while(true) {
     
@@ -329,6 +252,101 @@ void getCantones() {
 
 }
 
+std::string getCountryJSON( std::string country ) {
+  Socket s('s', false);
+  FILE *file;
+  char fchar, buf[JSON_S_SIZE]; 
+  int ret, head;
+  bool html       = false;
+  
+  char * host     = (char *) "api.covid19api.com"; 
+  std::string request_str = "GET https://api.covid19api.com/total/country/"+country+" HTTP/1.1\r\nhost: redes.ecci\r\nConnection: close\r\n\r\n";
+  //std::string request_str = "GET https://api.covid19api.com/total/country/+Dominica HTTP/1.1\r\nhost: redes.ecci\r\nConnection: close\r\n\r\n";
+  char * request = new char[request_str.length() + 1];
+  strcpy(request, request_str.c_str());
+  
+  int read_bytes = -1; // to control when to stop reading, 0 == read_bytes
+  //int read_bytes = 1; // to control when to stop reading, 0 == read_bytes
+
+  Parser parser;
+  //iniciando desde el puntero del buffer, asigna la connstante ZERO, cantidad de "celdas" JSON_S_SIZE a llenar con ZERO
+  memset(buf, ZERO, JSON_S_SIZE);
+
+  file = fopen(JSON_FILE_NAME, "w"); // abre un archivo, w (file access mode) para escribir
+
+  // si el archivo no se pudo abrir, que se salga
+  if(NULL == file){ // ni lo abre, devuelve nulo
+    printf("getFile:fopen:'w'");
+    exit(EXIT);
+  }
+
+  //fputs( "Country,CountryCode,Province,City,CityCode,Lat,Lon,Confirmed,Deaths,Recovered,Active,Date\n" ,file); // write columns names
+
+  // inicializar, conectar al servidor y envíe la consulta
+  s.InitSSL();
+  s.SSLConnect( host, (char *) "https"); // host y servicio
+  s.SSLWrite( (void *) request, strlen(request) );
+  
+  //while( 0 != read_bytes ){ // mientras la última cantidad de bytes leídos no haya sido 0
+  while( 0 != read_bytes ){ // mientras la última cantidad de bytes leídos no haya sido 0
+    //std::cout << "Antes: read_bytes: " << read_bytes << std::endl;
+    read_bytes = s.SSLRead(buf, JSON_S_SIZE); // returns 0 or read bytes
+    //std::cout << "Después: read_bytes: " << read_bytes << std::endl;
+    fputs(buf, file); // write chars in buffer to file
+    memset(buf, ZERO, JSON_S_SIZE); // limpiar buffer
+  }
+
+  fclose(file);
+  file = fopen(JSON_FILE_NAME, "r"); // open in read mode
+  head = ZERO;
+
+  while(fchar != CHAR4) { // toma chars hasta que encuentre un espacio
+    fchar = fgetc(file); // char por char // int fgetc(FILE *stream) gets the next character (an unsigned char) from the specified stream and advances the position indicator for the stream
+  }
+
+  fchar = fgetc(file); // toma el char después del  espacio
+
+  for(int i = TWO; i >= ZERO; i--) {// toma los 3 caracteres siguientes
+    head += (fchar - '0') * pow(POW, i); //
+    fchar = fgetc(file);
+  }
+
+  fclose(file);
+  switch(head) {
+
+    case 200:
+      html = true;
+      printf("Conexión establecida y datos cantonales recuperados.\n");
+      break;
+
+    case 400:
+      printf("Recurso no encontrado.\n");
+      exit(EXIT);
+      break;
+
+    case 404:
+      printf("Recurso no encontrado.\n");
+      exit(EXIT);
+      break;
+
+    case 501:
+      printf("No implementado.\n");
+      exit(EXIT);
+      break;
+
+    case 505:
+      printf("Version HTTP no soportada.\n");
+      exit(EXIT);
+      break;
+
+  }
+
+  //cantonParsed(JSON_FILE_NAME, WORKERS);
+  //cantonParsed(JSON_FILE_NAME, WORKERS);
+  return parser.countryJSON( JSON_FILE_NAME, fileExists(JSON_FILE_NAME), country );
+
+}
+
 
 
 /**
@@ -463,7 +481,7 @@ std::string responseHTTP(char * buf) {
 
   if(!region_info[ONE].compare(HTTP_400)) {
     message_body  = HTTP_400;
-    location      = "Location: 172.16.123.35:80/";
+    location      = "Location: 127.0.0.1:8080/";
   }
   else if(!region_info[ONE].compare(CANTON)) {
     if(queryCanton()) {
@@ -476,7 +494,7 @@ std::string responseHTTP(char * buf) {
 
     region        = translator(region_info[TWO]);
     message_body  = covidData(region, false, table);
-    location      = "Location: 172.16.123.35:80/?canton=";
+    location      = "Location: 127.0.0.1:8080/?canton=";
   }
   else if(!region_info[ONE].compare(COUNTRY)) {
     queryCountry();
@@ -487,7 +505,7 @@ std::string responseHTTP(char * buf) {
     
     region        = region_info[TWO];
     message_body  = covidData(region, true, table);
-    location      = "Location: 172.16.123.35:80/?country=";
+    location      = "Location: 127.0.0.1:8080/?country=";
   }
 
   /* Asignación del status code */

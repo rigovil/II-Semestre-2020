@@ -1,13 +1,3 @@
-#include <string.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <stdlib.h>
-#include <openssl/ssl.h>
-#include <openssl/err.h>
 #include "../headers/Socket.h"
 
 
@@ -416,7 +406,7 @@ void Socket :: SSLConnect(char * host, char * service) {
   SSL_set_fd((SSL *) this->SSLStruct, this->idSocket);
 
   int ret = SSL_connect((SSL *) this->SSLStruct);
-  // SSL_set_connect_state((SSL *) this->SSLStruct);
+
   if(ERROR == ret) {
     perror("Socket::SSLConnect");
     exit(EXIT);
@@ -435,8 +425,6 @@ void Socket :: SSLConnect(char * host, char * service) {
 int Socket :: SSLRead(void * buffer, int size) {
 
   int ret = SSL_read((SSL *) this->SSLStruct, buffer, size);
-  // SSL_set_connect_state((SSL *) this->SSLStruct);
-  // SSL_do_handshake((SSL *) this->SSLStruct);
 
   if(ERROR == ret) {
     perror("Socket::SSLRead");
