@@ -1,0 +1,2 @@
+server: server.cc ./sources/Parser.cc ./sources/Reader.cc ./sources/Socket.cc ./sources/Response.cc
+	g++ server.cc ./sources/Parser.cc ./sources/Reader.cc ./sources/Socket.cc ./sources/Response.cc -o server -lpthread -lssl -lcrypto

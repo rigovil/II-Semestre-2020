@@ -11,7 +11,7 @@
 #define WORKERS         4               /*  Indica la cantidad de trabajadores que van a analizar el código fuente de un servidor. */
 #define ARRAY_SIZE      4               /*  Indica el tamaño de los array que almacenan datos de "Otros" y totales. */
 #define L2              4               /*  Indica dónde termina a cortar un string. */
-#define SIZE            8               /*  Para identificar el tamaño del array con los caracteres que se eliminan. */
+#define SIZE            9               /*  Para identificar el tamaño del array con los caracteres que se eliminan. */
 #define S_SIZE          8               /*  Indica el tamaño de las lecturas del Socket de servidor. */
 #define POW             10              /*  Indica el valor de la potencia. */
 #define DATE            20              /*  Indica el tamaño del array donde se almacena la fecha. */
@@ -39,5 +39,5 @@
 
 /* OTRAS CONSTANTES */
 
-const std::string SPEC_CHARACTERS[]   = {"á", "é", "í", "ó", "ú", "%", "2", "0"};   /*  Caracteres que se eliminan de un string específico. */
-const std::string CHARACTERS[]        = {"a", "e", "i", "o", "u", "", "", ""};      /*  Caracteres que reemplazan a los caracteres eliminados. */
+const std::string SPEC_CHARACTERS[]   = {"á", "é", "í", "ó", "ú", "%", "2", "0", "-"};   /*  Caracteres que se eliminan de un string específico. */
+const std::string CHARACTERS[]        = {"a", "e", "i", "o", "u", "", "", "", ""};      /*  Caracteres que reemplazan a los caracteres eliminados. */
